@@ -53,7 +53,7 @@ namespace CX102PrickHMI.ViewModels
             //{
             //    InsertTime=DateTime.Now,
             //    Symbol="Test",
-            //    AlarmState="鍒拌揪",
+            //    AlarmState="到达",
             //    AlarmNote = "Test",
             //    VarName = "limitswitch"
             //});
@@ -62,13 +62,13 @@ namespace CX102PrickHMI.ViewModels
             AlarmItems = new ObservableCollection<AlarmEntry>();
             HistoryItems = new ObservableCollection<AlarmEntry>();
 
-            // 椤甸潰瑙嗗浘涓哄鍣ㄥ崟渚嬶紝鍒囨崲鏃剁洿鎺ュ鐢ㄥ凡鏋勫缓鐨勮瑙夋爲锛岄伩鍏嶉噸澶嶅疄渚嬪寲閫犳垚鍗￠】
+            // 页面视图为容器单例，切换时直接复用已构建的视觉树，避免重复实例化造成卡顿
             _monitorPage = monitorView;
             _overlapPage = overlapView;
             _alarmsPage = alarmListView;
             _historyPage = historyView;
 
-            // 鍥涗釜椤甸潰鐨?DataContext 缁熶竴鎸囧悜 MainViewModel
+            // 四个页面的 DataContext 统一指向 MainViewModel
             _monitorPage.DataContext = this;
             _overlapPage.DataContext = this;
             _alarmsPage.DataContext = this;
@@ -93,6 +93,8 @@ namespace CX102PrickHMI.ViewModels
             HoldHomingInCommand = new RelayCommand<bool>(value => _ = SendMomentaryAsync("CmdHomingIn", value));
             HoldHomingOutCommand = new RelayCommand<bool>(value => _ = SendMomentaryAsync("CmdHomingOut", value));
             HoldSetupCommand = new RelayCommand<bool>(value => _ = SendMomentaryAsync("CmdSetup", value));
+            HoldJogFwdCommand = new RelayCommand<bool>(value => _ = SendMomentaryAsync("CmdJogFwd", value));
+            HoldJogBwdCommand = new RelayCommand<bool>(value => _ = SendMomentaryAsync("CmdJogBwd", value));
             ResetCommand = new AsyncRelayCommand(ResetPulseAsync);
 
             var result = GetDeviceByPath(xmlPath);
@@ -118,10 +120,10 @@ namespace CX102PrickHMI.ViewModels
             }
         }
 
-        // CurrentValue 璇诲啓浜掓枼閿侊細鍚庡彴杞鍐?/ UI 娉佃鍏辩敤
+        // CurrentValue 读写互斥锁：后台轮询写 / UI 泵读共用
         private static readonly object ValueLock = new object();
 
-        // 500ms 蹇収娉碉細鍙 CurrentValue 鍒锋柊鐣岄潰灞炴€э紝缁濅笉鍐?PLC
+        // 500ms 快照泵：只读 CurrentValue 刷新界面属性，绝不写 PLC
         private void UpdateTimer_Tick(object sender, EventArgs e)
         {
             var device = CommonMethods.plcDevice;
@@ -151,7 +153,7 @@ namespace CX102PrickHMI.ViewModels
             RefreshSpliceBanner();
 
 
-            // 鍘熺偣鍊艰緭鍏ユ锛氬搴旇酱閿洏鎵撳紑鏈熼棿鏆傚仠鍒锋柊锛岄伩鍏嶇紪杈戝€艰瑕嗙洊
+            // 原点值输入框：对应轴键盘打开期间暂停刷新，避免编辑值被覆盖
             if (KeypadTarget != KeypadTarget.In)
             {
                 UpdateTextSnapshot(values, "HomingRefPosIn", v => HomingRefPosInText = v);
@@ -173,7 +175,7 @@ namespace CX102PrickHMI.ViewModels
 
             if (!found)
             {
-                return; // 缂洪敭/闈炴硶鍊间繚鐣欎笂娆″€?
+                return; // 缺键/非法值保留上次值
             }
 
             var text = FormatF2(raw);
@@ -194,7 +196,7 @@ namespace CX102PrickHMI.ViewModels
 
             if (!found)
             {
-                return; // 缂洪敭/闈炴硶鍊间繚鐣欎笂娆″€?
+                return; // 缺键/非法值保留上次值
             }
 
             assign(ParseBool(raw));
@@ -270,10 +272,10 @@ namespace CX102PrickHMI.ViewModels
         private readonly Views.AlarmListView _alarmsPage;
         private readonly Views.HistoryAlarmView _historyPage;
 
-        // 鈥斺€?鐩戞帶椤碉紙PLC 缁戝畾灞炴€э級 鈥斺€?
+        // —— 监控页（PLC 绑定属性） ——
         public ObservableCollection<ProcessStep> Steps { get; private set; }
 
-        // 璇诲€煎揩鐓у睘鎬э細鐢?UpdateTimer_Tick 浠?CurrentValue 鍒锋柊
+        // 读值快照属性：由 UpdateTimer_Tick 从 CurrentValue 刷新
         private string _recipeRing1 = "0.00";
         public string RecipeRing1
         {
@@ -344,7 +346,7 @@ namespace CX102PrickHMI.ViewModels
             private set { SetProperty(ref _driveOutEnable, value); }
         }
 
-        // 璇箟锛歠alse = 杩愯涓紝true = 宸插仠鏈?
+        // 语义：false = 运行中，true = 已停机
         private bool _mainMachineStop;
         public bool MainMachineStop
         {
@@ -372,7 +374,7 @@ namespace CX102PrickHMI.ViewModels
             set { SetProperty(ref _servo2Actual, value); }
         }
 
-        // 鍘熺偣杈撳叆妗嗘牎楠屽け璐ユ爣璁帮紙绾㈣壊杈规锛?
+        // 原点输入框校验失败标记（红色边框）
         private bool _homingRefPosInInvalid;
         public bool HomingRefPosInInvalid
         {
@@ -400,7 +402,7 @@ namespace CX102PrickHMI.ViewModels
             get { return false; }
         }
 
-        // 鈥斺€?鍘熺偣鏁板瓧閿洏鐘舵€?鈥斺€?
+        // —— 原点数字键盘状态 ——
         private KeypadTarget _keypadTarget;
         public KeypadTarget KeypadTarget
         {
@@ -436,7 +438,7 @@ namespace CX102PrickHMI.ViewModels
             }
         }
 
-        // 棣栭敭鏇挎崲鏍囧織锛氭墦寮€閿洏鎴?C 娓呯┖鍚庣疆 true锛屼笅涓€涓暟瀛?鐐规暣浣撴浛鎹㈣緭鍏ョ紦鍐?
+        // 首键替换标志：打开键盘或 C 清空后置 true，下一个数字/点整体替换输入缓冲
         private bool _keypadFreshInput;
 
         private string _keypadEditValue = "";
@@ -464,7 +466,7 @@ namespace CX102PrickHMI.ViewModels
             get { return !string.IsNullOrEmpty(KeypadErrorText); }
         }
 
-        // 鈥斺€?閿洏 / 鐐瑰姩鍛戒护 鈥斺€?
+        // —— 键盘 / 点动命令 ——
         public IRelayCommand<string> KeypadDigitCommand { get; }
         public IRelayCommand KeypadBackspaceCommand { get; }
         public IRelayCommand KeypadClearCommand { get; }
@@ -475,6 +477,8 @@ namespace CX102PrickHMI.ViewModels
         public IRelayCommand<bool> HoldHomingInCommand { get; }
         public IRelayCommand<bool> HoldHomingOutCommand { get; }
         public IRelayCommand<bool> HoldSetupCommand { get; }
+        public IRelayCommand<bool> HoldJogFwdCommand { get; }
+        public IRelayCommand<bool> HoldJogBwdCommand { get; }
         public IRelayCommand ResetCommand { get; }
 
         private void OpenKeypad(KeypadTarget target)
@@ -575,7 +579,7 @@ namespace CX102PrickHMI.ViewModels
 
                 if (value <= 0f)
                 {
-                    KeypadErrorText = "鍘熺偣鍊煎繀椤诲ぇ浜?0";
+                    KeypadErrorText = "原点值必须大于0";
                     SetKeypadInvalid(true);
                     return;
                 }
@@ -586,14 +590,14 @@ namespace CX102PrickHMI.ViewModels
                 string address;
                 if (!PlcTagLookup.TryGetAddress(CommonMethods.plcDevice, varName, out address))
                 {
-                    CalibrationMessage = "鏈壘鍒扮偣浣嶅湴鍧€";
+                    CalibrationMessage = "未找到点位地址";
                     CloseKeypad();
                     return;
                 }
 
                 if (!await CommonMethods.plc.WriteNodeAsync<float>(address, value))
                 {
-                    // 鍐欏叆澶辫触锛氶敭鐩樹繚鎸佹墦寮€锛屽厑璁搁噸璇?
+                    // 写入失败：键盘保持打开，允许重试
                     CalibrationMessage = "写入失败，请检查 PLC 连接";
                     return;
                 }
@@ -628,7 +632,7 @@ namespace CX102PrickHMI.ViewModels
                 string address;
                 if (!PlcTagLookup.TryGetAddress(CommonMethods.plcDevice, varName, out address))
                 {
-                    CalibrationMessage = "鏈壘鍒扮偣浣嶅湴鍧€: " + varName;
+                    CalibrationMessage = "未找到点位地址: " + varName;
                     return;
                 }
 
@@ -644,7 +648,7 @@ namespace CX102PrickHMI.ViewModels
             }
         }
 
-        // 澶嶄綅锛氫竴娆＄偣鍑诲彂 true锛?0ms 鍚庡彂 false
+        // 复位：一次点击发 true，100ms 后发 false
         private async Task ResetPulseAsync()
         {
             try
@@ -652,35 +656,35 @@ namespace CX102PrickHMI.ViewModels
                 string address;
                 if (!PlcTagLookup.TryGetAddress(CommonMethods.plcDevice, "CmdReset", out address))
                 {
-                    CalibrationMessage = "鏈壘鍒扮偣浣嶅湴鍧€: CmdReset";
+                    CalibrationMessage = "未找到点位地址: CmdReset";
                     return;
                 }
                 if (!await CommonMethods.plc.WriteNodeAsync<bool>(address, true))
                 {
-                    CalibrationMessage = "澶嶄綅鍐欏叆澶辫触";
+                    CalibrationMessage = "复位写入失败";
                     return;
                 }
                 await Task.Delay(100);
                 if (!await CommonMethods.plc.WriteNodeAsync<bool>(address, false))
                 {
-                    CalibrationMessage = "澶嶄綅鍐欏叆澶辫触";
+                    CalibrationMessage = "复位写入失败";
                 }
             }
             catch (Exception ex)
             {
-                CalibrationMessage = "澶嶄綅鍐欏叆澶辫触";
-                NLogHelper.Warn("澶嶄綅鍛戒护鍐欏叆澶辫触", ex);
+                CalibrationMessage = "复位写入失败";
+                NLogHelper.Warn("复位命令写入失败", ex);
             }
         }
 
-        // 鈥斺€?鎶ヨ璁板綍椤碉紙鍘?AlarmListViewModel 鍚堝苟锛?鈥斺€?
+        // —— 报警记录页（原 AlarmListViewModel 合并） ——
         public ObservableCollection<AlarmEntry> AlarmItems { get; private set; }
 
-        // 鈥斺€?鍘嗗彶鎶ヨ椤碉紙鍘?HistoryAlarmViewModel 鍚堝苟锛?鈥斺€?
+        // —— 历史报警页（原 HistoryAlarmViewModel 合并） ——
         public ObservableCollection<AlarmEntry> HistoryItems { get; private set; }
         public string DateSummary { get { return ""; } }
 
-        // 鈥斺€?鎼帴鐩戞帶椤?(OverlapMonitorView) 鈥斺€?
+        // —— 搭接监控页 (OverlapMonitorView) ——
         private double _spliceValue1Value;
         public double SpliceValue1Value
         {
@@ -768,7 +772,7 @@ namespace CX102PrickHMI.ViewModels
         {
             get
             {
-                if (!HasAnySpliceAlarm) return "妫€娴嬫甯?| SYSTEM NORMAL";
+                if (!HasAnySpliceAlarm) return "检测正常 | SYSTEM NORMAL";
                 var parts = new List<string>();
                 if (SpliceValue1OutOfRange) parts.Add("P-01 前段");
                 if (SpliceValue2OutOfRange) parts.Add("P-02 中段");
@@ -783,7 +787,7 @@ namespace CX102PrickHMI.ViewModels
         public ICommand ShowHistoryCommand { get; }
         public ICommand ExitCommand { get; }
         public string SystemStatus { get { return "主线运行中"; } }
-        public string FooterStatus { get { return "璁惧鍦ㄧ嚎 路 PLC 杩炴帴姝ｅ父"; } }
+        public string FooterStatus { get { return "设备在线 · PLC 连接正常"; } }
         public string Version { get { return "v1.0.0"; } }
 
         public bool OpcConnected { get; private set; }
@@ -831,10 +835,10 @@ namespace CX102PrickHMI.ViewModels
         private string xmlPath = System.AppDomain.CurrentDomain.BaseDirectory + "\\Settings\\settings.json";
         private DispatcherTimer updateTimer;
         private int heartbeatFailureCount = 0; // 心跳失败次数计数器
-        private const int MaxHeartbeatFailures = 200000; // 鍏佽鐨勬渶澶уけ璐ユ鏁?
+        private const int MaxHeartbeatFailures = 200000; // 允许的最大失败次数
         private int previousHeartbeatValue = -1; // 存储上一次的心跳值
         private int heartbeatCheckInterval = 1000;
-        private bool firstConnect;//绗竴娆¤繛鎺ユ爣蹇椾负
+        private bool firstConnect;//第一次连接标志为
 
         private void PlcDevice_AlarmTriggerEvent(object sender, AlarmEventArgs e)
         {
@@ -890,21 +894,21 @@ namespace CX102PrickHMI.ViewModels
                         heartbeatFailureCount++;
                         if (heartbeatFailureCount >= MaxHeartbeatFailures)
                         {
-                            // 杩炵画澶氭澶辫触锛屽彲鑳藉凡鏂紑杩炴帴
+                            // 连续多次失败，可能已断开连接
                             device.IsConnected = false;
                             await AttemptConnectionAndInitialData(ua, device);
-                            heartbeatFailureCount = 0; // 閲嶇疆璁℃暟鍣?
+                            heartbeatFailureCount = 0; // 重置计数器
 
                         }
                     }
                     else
                     {
-                        // 蹇冭烦鍊煎彉鍖栵紝閲嶇疆澶辫触璁℃暟鍣?
+                        // 心跳值变化，重置失败计数器
                         heartbeatFailureCount = 0;
                         previousHeartbeatValue = currentHeartbeatValue;
                     }
                 }
-                await Task.Delay(heartbeatCheckInterval); // 妫€鏌ラ棿闅?
+                await Task.Delay(heartbeatCheckInterval); // 检查间隔
             }
         }
 
@@ -941,7 +945,7 @@ namespace CX102PrickHMI.ViewModels
             {
                 device.IsConnected = false;
                 OpcConnected = false;
-                NLogHelper.Warn("OPCUA寤虹珛閫氳澶辫触", ex);
+                NLogHelper.Warn("OPCUA建立通讯失败", ex);
             }
 
             await Task.CompletedTask;
@@ -988,11 +992,11 @@ namespace CX102PrickHMI.ViewModels
                     }
                     catch (Exception EX)
                     {
-                        NLogHelper.Warn($"璇诲彇plc鏁版嵁澶辫触锛屾暟鎹粍: {gp.GroupName}", EX);
+                        NLogHelper.Warn($"读取plc数据失败，数据组: {gp.GroupName}", EX);
                     }
                 }
 
-                await Task.Delay(250, token); // 鏁磋疆鎵弿鍚庣殑缁熶竴鑺傛媿
+                await Task.Delay(250, token); // 整轮扫描后的统一节拍
             }
         }
     }

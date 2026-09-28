@@ -188,6 +188,16 @@
                         <StackPanel Margin="0,18,0,18" Orientation="Horizontal">
                             <Button
                                 Margin="0,0,12,0"
+                                b:MomentaryButtonBehavior.Command="{Binding HoldJogFwdCommand}"
+                                Content="点动前进"
+                                Style="{StaticResource HoldButtonStyle}" />
+                            <Button
+                                Margin="0,0,12,0"
+                                b:MomentaryButtonBehavior.Command="{Binding HoldJogBwdCommand}"
+                                Content="点动后退"
+                                Style="{StaticResource HoldButtonStyle}" />
+                            <Button
+                                Margin="0,0,12,0"
                                 b:MomentaryButtonBehavior.Command="{Binding HoldHomingInCommand}"
                                 Content="校准内侧"
                                 Style="{StaticResource HoldButtonStyle}" />
