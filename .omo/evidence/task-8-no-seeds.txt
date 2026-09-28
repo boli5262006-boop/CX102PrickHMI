@@ -1,0 +1,6 @@
+﻿T8 verify: no seeds / no simulation timer in MainViewModel.cs
+PASS: zero matches for _simulationTimer / seed strings / 125.00
+            Steps = new ObservableCollection<ProcessStep>();
+            AlarmItems = new ObservableCollection<AlarmEntry>();
+            HistoryItems = new ObservableCollection<AlarmEntry>();
+        public string DateSummary { get { return ""; } }

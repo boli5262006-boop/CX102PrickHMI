@@ -1,0 +1,762 @@
+{
+  "schemaVersion": "1.0",
+  "skillProvenance": {
+    "name": "solo-design",
+    "version": "2026.07.22.00.00.00",
+    "version_source": "skill-release-manifest.json",
+    "read_status": "ok"
+  },
+  "project": {
+    "operation": "create",
+    "resolvedLane": "existing_edit_add_comparison",
+    "intentProfile": {
+      "caseFamily": "free_exploration",
+      "sourceType": "text",
+      "deviceTarget": "desktop"
+    },
+    "selectedIntentWorkflowRead": true,
+    "contextRequirementsLoaded": [
+      {
+        "path": "shared-runtime/runtime-boundaries/lane-runtime-contracts.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "shared-runtime/agent-dispatch-runtime/lane-dispatch-index.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "shared-runtime/agent-dispatch-runtime/shared-page-rendering-kernel.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "delivery-quality/page-rendering-quality-gate.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "delivery-quality/design-artifact-validation.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "delivery-quality/delivery-evidence-contract.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "visual-experience/visual-experience-guidelines.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "visual-experience/visual-checkpoint-protocol.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      }
+    ],
+    "contextReadScope": "complex_html_page_full",
+    "designRead": "Industrial HMI / spike-roller automation / cool neutral dark + cyan accent / information-dense dashboard / avoid rounded playful shapes",
+    "designDials": {
+      "layoutVariance": 2,
+      "motionIntensity": 1,
+      "visualDensity": 4
+    },
+    "styleDefinitionBrief": "工业简洁风：深色背景、冷灰中性、青色强调，信息密度高，控件大而清晰，适合车间触屏操作。",
+    "deviceType": "desktop",
+    "projectName": "刺辊自动化监控界面",
+    "designProjectPath": "C:/Users/bobo/AppData/Roaming/TRAE SOLO CN/ModularData/ai-agent/work-mode-projects/6a69f6ad12127d641f14c5c1/spike-roller-hmi",
+    "generationTree": {
+      "root": {
+        "nodeId": "gen-project-shell",
+        "kind": "project-shell",
+        "pageIds": [
+          "page-index",
+          "page-alarms"
+        ],
+        "output": "partials/project-shell.html",
+        "sharedRegions": [
+          "header",
+          "page-title",
+          "navigation-tabs",
+          "root-frame",
+          "footer-status"
+        ],
+        "privateRegions": [],
+        "mutableSlots": [
+          "activeNavItem",
+          "pageTitle"
+        ],
+        "status": "generated",
+        "children": [
+          {
+            "nodeId": "gen-page-index",
+            "kind": "page-leaf",
+            "pageIds": [
+              "page-index"
+            ],
+            "output": "pages/index.html",
+            "sharedRegions": [
+              "header",
+              "page-title",
+              "navigation-tabs",
+              "root-frame",
+              "footer-status"
+            ],
+            "privateRegions": [
+              "dashboard-content"
+            ],
+            "mutableSlots": [
+              "activeNavItem",
+              "pageTitle"
+            ],
+            "status": "planned",
+            "children": []
+          },
+          {
+            "nodeId": "gen-page-alarms",
+            "kind": "page-leaf",
+            "pageIds": [
+              "page-alarms"
+            ],
+            "output": "pages/alarms.html",
+            "sharedRegions": [
+              "header",
+              "page-title",
+              "navigation-tabs",
+              "root-frame",
+              "footer-status"
+            ],
+            "privateRegions": [
+              "alarm-list-content"
+            ],
+            "mutableSlots": [
+              "activeNavItem",
+              "pageTitle"
+            ],
+            "status": "planned",
+            "children": []
+          }
+        ]
+      }
+    },
+    "cssPreflightEvidence": {
+      "command": "apply-html-head-contract.mjs colors_and_type.css .preflight/preflight.html --title=Preflight --lang=zh-CN --prefix=sr",
+      "outputFile": ".preflight/preflight.html",
+      "success": true,
+      "themeVarsPresent": true,
+      "semanticFallbackPresent": true,
+      "tailwindInlinePresent": true,
+      "htmlClass": "light"
+    },
+    "sharedProjectShellContract": {
+      "radiusScale": {
+        "sm": "4px",
+        "md": "8px",
+        "lg": "12px",
+        "max": "16px"
+      },
+      "surfaceDepthModel": "border-and-surface-led; static shadow alpha <= 0.05; floating layers may use shadow-2",
+      "typographySystem": {
+        "sans": "Inter, Noto Sans SC, PingFang SC, Microsoft YaHei, system-ui, sans-serif",
+        "mono": "JetBrains Mono, SF Mono, Menlo, monospace"
+      },
+      "primaryColor": "#0ea5e9",
+      "stateColors": {
+        "success": "#22c55e",
+        "warning": "#f59e0b",
+        "error": "#ef4444",
+        "info": "#3b82f6"
+      },
+      "navigationShell": "top-header-with-tab-nav",
+      "continuityAnchors": [
+        "header-brand-and-title",
+        "top-tab-navigation",
+        "surface-card-style",
+        "cyan-primary-cta",
+        "mono-numeric-readouts"
+      ]
+    },
+    "dispatchPreflightManifest": [
+      {
+        "recorded_at": "2026-07-29T12:58:33.092Z",
+        "generatedBy": "build-page-dispatch-manifest.mjs",
+        "packetType": "ComplexPagePacket",
+        "laneContract": {
+          "resolvedLane": "complex_html_page",
+          "packetType": "ComplexPagePacket",
+          "pageRuntimeGuide": "intent-workflows/intent-project-complex-build/complex-page-runtime.md",
+          "dispatchContract": "intent-workflows/intent-project-complex-build/complex-page-dispatch-contract.md"
+        },
+        "taskLinePresent": true,
+        "outputPathPresent": true,
+        "sharedTemplate": "intent-workflows/intent-project-complex-build/complex-page-runtime.md",
+        "nodeId": "page-index",
+        "htmlSrc": "pages/index.html",
+        "supplementaryReads": [],
+        "allowedWritePaths": [
+          "pages/index.html",
+          "assets/"
+        ],
+        "forbiddenWriteRoots": [
+          "*.design",
+          "runtime-orchestration-summary.json",
+          "validation-report.json",
+          "finish-readiness-report.json",
+          "restore-contract-report.json",
+          "page-generation-summary.json"
+        ],
+        "toolPolicy": {
+          "todoWriteAllowed": false,
+          "validationScriptsAllowed": false,
+          "previewAllowed": false,
+          "helperScriptsAllowed": false,
+          "designFileWriteAllowed": false,
+          "allowedWritePaths": [
+            "pages/index.html",
+            "assets/"
+          ]
+        },
+        "skillRuntime": {
+          "skillDir": "c:\\Users\\bobo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design",
+          "deterministicToolDir": "c:\\Users\\bobo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling",
+          "toolPaths": {
+            "applyHtmlHeadContract": "c:\\Users\\bobo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\apply-html-head-contract.mjs",
+            "recordDispatchCompletion": "c:\\Users\\bobo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\record-dispatch-completion.mjs",
+            "buildPageDispatchManifest": "c:\\Users\\bobo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\build-page-dispatch-manifest.mjs",
+            "validateDesignWorkspace": "c:\\Users\\bobo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-design-workspace.mjs",
+            "validateFinishReadiness": "c:\\Users\\bobo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-finish-readiness.mjs",
+            "validateRestoreContract": "c:\\Users\\bobo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-restore-contract.mjs"
+          },
+          "requiredForPageSubAgent": [
+            "applyHtmlHeadContract",
+            "recordDispatchCompletion"
+          ],
+          "pathInjection": "absolute",
+          "pathContract": "Do not use {SKILL_DIR} placeholders inside Page Sub-Agent packets; use toolPaths.* absolute paths.",
+          "commandTemplates": {
+            "recordDispatchCompletion": "node \"c:\\Users\\bobo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\record-dispatch-completion.mjs\" \"C:\\Users\\bobo\\AppData\\Roaming\\TRAE SOLO CN\\ModularData\\ai-agent\\work-mode-projects\\6a69f6ad12127d641f14c5c1\\spike-roller-hmi\" --node-id=\"page-index\" --html-src=\"pages/index.html\" --status=completed --changed-files=<comma-separated-project-relative-files> --trace-digest=<main-agent-runtime-trace-digest> --tool-ledger-json=<tool-ledger-json-or-file>"
+          }
+        },
+        "cssFilePath": "C:\\Users\\bobo\\AppData\\Roaming\\TRAE SOLO CN\\ModularData\\ai-agent\\work-mode-projects\\6a69f6ad12127d641f14c5c1\\spike-roller-hmi\\colors_and_type.css",
+        "htmlFilePath": "C:\\Users\\bobo\\AppData\\Roaming\\TRAE SOLO CN\\ModularData\\ai-agent\\work-mode-projects\\6a69f6ad12127d641f14c5c1\\spike-roller-hmi\\pages\\index.html",
+        "brandPrefix": "sr",
+        "aestheticsMode": "free-explore",
+        "toolDisciplineBlockPresent": true,
+        "fillHtmlHeadCommand": "node \"c:\\Users\\bobo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\apply-html-head-contract.mjs\" \"C:\\Users\\bobo\\AppData\\Roaming\\TRAE SOLO CN\\ModularData\\ai-agent\\work-mode-projects\\6a69f6ad12127d641f14c5c1\\spike-roller-hmi\\colors_and_type.css\" \"C:\\Users\\bobo\\AppData\\Roaming\\TRAE SOLO CN\\ModularData\\ai-agent\\work-mode-projects\\6a69f6ad12127d641f14c5c1\\spike-roller-hmi\\pages\\index.html\" --title=\"刺辊监控\" --lang=\"zh-CN\" --prefix=\"sr\"",
+        "headFillMode": "skeleton-first",
+        "viewportMode": "document-scroll",
+        "completionSchemaExpected": "full",
+        "restoreFields": null,
+        "restoreContractStatus": null,
+        "restoreCompactPacket": null,
+        "deterministicCommands": null,
+        "sourceAuthorityLock": null,
+        "preDispatchFileHashes": {
+          "spike-roller-hmi.design": "ee3957e375b65defc64931c146ccc900317e92e15c6a0ae464544fc5c2e34180"
+        },
+        "contextPreflight": {
+          "workflowPath": "intent-workflows/intent-project-complex-build/INTENT_WORKFLOW.md",
+          "requiredContextFiles": [
+            "shared-runtime/runtime-boundaries/lane-runtime-contracts.md",
+            "shared-runtime/agent-dispatch-runtime/lane-dispatch-index.md",
+            "shared-runtime/agent-dispatch-runtime/shared-page-rendering-kernel.md",
+            "delivery-quality/page-rendering-quality-gate.md",
+            "delivery-quality/design-artifact-validation.md",
+            "delivery-quality/delivery-evidence-contract.md",
+            "visual-experience/visual-experience-guidelines.md",
+            "visual-experience/visual-checkpoint-protocol.md"
+          ],
+          "optionalContextFiles": [],
+          "passed": true
+        },
+        "pageSliceOnly": true,
+        "requiredFieldsPresent": true,
+        "missingFields": [],
+        "fillHtmlHeadCommandValid": true,
+        "mobileNavigation": {
+          "required": false,
+          "appliesToThisPage": false,
+          "canonicalHtmlIncluded": false,
+          "missingFields": []
+        },
+        "persistedToSummary": true,
+        "taskQueryAudited": false,
+        "proofSource": "summary-only",
+        "largeWorkflowFilesInTaskQuery": null
+      },
+      {
+        "recorded_at": "2026-07-29T12:58:33.092Z",
+        "generatedBy": "build-page-dispatch-manifest.mjs",
+        "packetType": "ComplexPagePacket",
+        "laneContract": {
+          "resolvedLane": "complex_html_page",
+          "packetType": "ComplexPagePacket",
+          "pageRuntimeGuide": "intent-workflows/intent-project-complex-build/complex-page-runtime.md",
+          "dispatchContract": "intent-workflows/intent-project-complex-build/complex-page-dispatch-contract.md"
+        },
+        "taskLinePresent": true,
+        "outputPathPresent": true,
+        "sharedTemplate": "intent-workflows/intent-project-complex-build/complex-page-runtime.md",
+        "nodeId": "page-alarms",
+        "htmlSrc": "pages/alarms.html",
+        "supplementaryReads": [],
+        "allowedWritePaths": [
+          "pages/alarms.html",
+          "assets/"
+        ],
+        "forbiddenWriteRoots": [
+          "*.design",
+          "runtime-orchestration-summary.json",
+          "validation-report.json",
+          "finish-readiness-report.json",
+          "restore-contract-report.json",
+          "page-generation-summary.json"
+        ],
+        "toolPolicy": {
+          "todoWriteAllowed": false,
+          "validationScriptsAllowed": false,
+          "previewAllowed": false,
+          "helperScriptsAllowed": false,
+          "designFileWriteAllowed": false,
+          "allowedWritePaths": [
+            "pages/alarms.html",
+            "assets/"
+          ]
+        },
+        "skillRuntime": {
+          "skillDir": "c:\\Users\\bobo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design",
+          "deterministicToolDir": "c:\\Users\\bobo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling",
+          "toolPaths": {
+            "applyHtmlHeadContract": "c:\\Users\\bobo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\apply-html-head-contract.mjs",
+            "recordDispatchCompletion": "c:\\Users\\bobo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\record-dispatch-completion.mjs",
+            "buildPageDispatchManifest": "c:\\Users\\bobo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\build-page-dispatch-manifest.mjs",
+            "validateDesignWorkspace": "c:\\Users\\bobo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-design-workspace.mjs",
+            "validateFinishReadiness": "c:\\Users\\bobo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-finish-readiness.mjs",
+            "validateRestoreContract": "c:\\Users\\bobo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-restore-contract.mjs"
+          },
+          "requiredForPageSubAgent": [
+            "applyHtmlHeadContract",
+            "recordDispatchCompletion"
+          ],
+          "pathInjection": "absolute",
+          "pathContract": "Do not use {SKILL_DIR} placeholders inside Page Sub-Agent packets; use toolPaths.* absolute paths.",
+          "commandTemplates": {
+            "recordDispatchCompletion": "node \"c:\\Users\\bobo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\record-dispatch-completion.mjs\" \"C:\\Users\\bobo\\AppData\\Roaming\\TRAE SOLO CN\\ModularData\\ai-agent\\work-mode-projects\\6a69f6ad12127d641f14c5c1\\spike-roller-hmi\" --node-id=\"page-alarms\" --html-src=\"pages/alarms.html\" --status=completed --changed-files=<comma-separated-project-relative-files> --trace-digest=<main-agent-runtime-trace-digest> --tool-ledger-json=<tool-ledger-json-or-file>"
+          }
+        },
+        "cssFilePath": "C:\\Users\\bobo\\AppData\\Roaming\\TRAE SOLO CN\\ModularData\\ai-agent\\work-mode-projects\\6a69f6ad12127d641f14c5c1\\spike-roller-hmi\\colors_and_type.css",
+        "htmlFilePath": "C:\\Users\\bobo\\AppData\\Roaming\\TRAE SOLO CN\\ModularData\\ai-agent\\work-mode-projects\\6a69f6ad12127d641f14c5c1\\spike-roller-hmi\\pages\\alarms.html",
+        "brandPrefix": "sr",
+        "aestheticsMode": "free-explore",
+        "toolDisciplineBlockPresent": true,
+        "fillHtmlHeadCommand": "node \"c:\\Users\\bobo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\apply-html-head-contract.mjs\" \"C:\\Users\\bobo\\AppData\\Roaming\\TRAE SOLO CN\\ModularData\\ai-agent\\work-mode-projects\\6a69f6ad12127d641f14c5c1\\spike-roller-hmi\\colors_and_type.css\" \"C:\\Users\\bobo\\AppData\\Roaming\\TRAE SOLO CN\\ModularData\\ai-agent\\work-mode-projects\\6a69f6ad12127d641f14c5c1\\spike-roller-hmi\\pages\\alarms.html\" --title=\"报警记录\" --lang=\"zh-CN\" --prefix=\"sr\"",
+        "headFillMode": "skeleton-first",
+        "viewportMode": "document-scroll",
+        "completionSchemaExpected": "full",
+        "restoreFields": null,
+        "restoreContractStatus": null,
+        "restoreCompactPacket": null,
+        "deterministicCommands": null,
+        "sourceAuthorityLock": null,
+        "preDispatchFileHashes": {
+          "spike-roller-hmi.design": "ee3957e375b65defc64931c146ccc900317e92e15c6a0ae464544fc5c2e34180"
+        },
+        "contextPreflight": {
+          "workflowPath": "intent-workflows/intent-project-complex-build/INTENT_WORKFLOW.md",
+          "requiredContextFiles": [
+            "shared-runtime/runtime-boundaries/lane-runtime-contracts.md",
+            "shared-runtime/agent-dispatch-runtime/lane-dispatch-index.md",
+            "shared-runtime/agent-dispatch-runtime/shared-page-rendering-kernel.md",
+            "delivery-quality/page-rendering-quality-gate.md",
+            "delivery-quality/design-artifact-validation.md",
+            "delivery-quality/delivery-evidence-contract.md",
+            "visual-experience/visual-experience-guidelines.md",
+            "visual-experience/visual-checkpoint-protocol.md"
+          ],
+          "optionalContextFiles": [],
+          "passed": true
+        },
+        "pageSliceOnly": true,
+        "requiredFieldsPresent": true,
+        "missingFields": [],
+        "fillHtmlHeadCommandValid": true,
+        "mobileNavigation": {
+          "required": false,
+          "appliesToThisPage": false,
+          "canonicalHtmlIncluded": false,
+          "missingFields": []
+        },
+        "persistedToSummary": true,
+        "taskQueryAudited": false,
+        "proofSource": "summary-only",
+        "largeWorkflowFilesInTaskQuery": null
+      }
+    ],
+    "expectedDispatches": [
+      {
+        "nodeId": "page-index",
+        "pageId": "page-index",
+        "targetPageId": "page-index",
+        "htmlSrc": "pages/index.html",
+        "packetType": "ComplexPagePacket",
+        "status": "completed",
+        "changedFiles": [
+          "pages/index.html"
+        ],
+        "toolCallLedger": {
+          "source": "main-agent-runtime-trace",
+          "traceDigest": "f2f30fdb5774b97a7acbf3641795d9b20e969df9bfde8c90636ee9ad84694659",
+          "todoWriteCalls": 0,
+          "previewCalls": 0,
+          "validationScriptCalls": 0,
+          "helperScriptWrites": 0
+        },
+        "recordedAt": "2026-07-29T13:13:05.283Z",
+        "source": "record-dispatch-completion.mjs"
+      },
+      {
+        "nodeId": "page-alarms",
+        "pageId": "page-alarms",
+        "targetPageId": "page-alarms",
+        "htmlSrc": "pages/alarms.html",
+        "packetType": "ComplexPagePacket",
+        "status": "completed",
+        "changedFiles": [
+          "pages/alarms.html"
+        ],
+        "toolCallLedger": {
+          "source": "main-agent-runtime-trace",
+          "traceDigest": "f2f30fdb5774b97a7acbf3641795d9b20e969df9bfde8c90636ee9ad84694659",
+          "todoWriteCalls": 0,
+          "previewCalls": 0,
+          "validationScriptCalls": 0,
+          "helperScriptWrites": 0
+        },
+        "recordedAt": "2026-07-29T13:13:05.337Z",
+        "source": "record-dispatch-completion.mjs"
+      }
+    ],
+    "validationRunDiscipline": {
+      "maxFullValidationRuns": 2,
+      "softWarningsTriggerRepair": false,
+      "blockingRepairMode": "targeted-once",
+      "forbiddenRepairTriggers": [
+        "soft-warning-only",
+        "provenance-warning-only",
+        "style-warning-only"
+      ]
+    },
+    "validationHistory": [
+      {
+        "reportPath": "validation-report.json",
+        "reportHash": "9d5d91106b174d2de9d70a17e9e3688e2c1100f176acf2b8e62a1373b89da253",
+        "checkedAt": "2026-07-29T13:09:58.188Z",
+        "success": false,
+        "exitCode": 1,
+        "renderBlockingErrorCount": 6,
+        "repairPlanHints": [],
+        "errorSignatures": [
+          {
+            "errorClass": "dispatch-changed-files",
+            "normalized": "[dispatch-changed-files] pages/index.html: toolCallLedger.source must be main-agent-runtime-trace; found (missing)",
+            "signature": "fc6dc878ce3863b26478549cc3a255dc1dd21bfef4faf663342c4cc904702c3b"
+          },
+          {
+            "errorClass": "dispatch-changed-files",
+            "normalized": "[dispatch-changed-files] pages/index.html: toolCallLedger.traceDigest is required for trace-sourced discipline audit",
+            "signature": "a24cc56481b4b1b9c3330e3fbb10d8932f94746b40568d40d31968799dbaa756"
+          },
+          {
+            "errorClass": "artifact-readiness",
+            "normalized": "[dispatch-changed-files] pages/index.html: controlled file changed after dispatch preflight without mainAgentPostDispatchMutations evidence: spike-roller-hmi.design",
+            "signature": "73966312ad4b3da8cedecf14199fe8314b95d01778dff08331c435d1441c82c5"
+          },
+          {
+            "errorClass": "dispatch-changed-files",
+            "normalized": "[dispatch-changed-files] pages/alarms.html: toolCallLedger.source must be main-agent-runtime-trace; found (missing)",
+            "signature": "8f001ffb792e2fe74999448f435cc9c804109d5b0e549763a0da9f00c3ed6a54"
+          },
+          {
+            "errorClass": "dispatch-changed-files",
+            "normalized": "[dispatch-changed-files] pages/alarms.html: toolCallLedger.traceDigest is required for trace-sourced discipline audit",
+            "signature": "388971264cb175e1b699c8bf15a5edfdad221a80fe88343a5e71f8d9266b16ec"
+          },
+          {
+            "errorClass": "artifact-readiness",
+            "normalized": "[dispatch-changed-files] pages/alarms.html: controlled file changed after dispatch preflight without mainAgentPostDispatchMutations evidence: spike-roller-hmi.design",
+            "signature": "6431f3297c8acc391d8c4fc2a1bab9552659e5ab37fdb40336510f777810e7ec"
+          }
+        ],
+        "terminalState": null
+      },
+      {
+        "reportPath": "validation-report.json",
+        "reportHash": "14203fd32e5ccf182e8d41bb33686dcc496c3c951da4fd75f82e2f0ecbaa0411",
+        "checkedAt": "2026-07-29T13:13:58.812Z",
+        "success": true,
+        "exitCode": 0,
+        "renderBlockingErrorCount": 0,
+        "repairPlanHints": [],
+        "errorSignatures": [],
+        "terminalState": null
+      }
+    ],
+    "validationRepairLedger": [
+      {
+        "failedReportPath": "validation-report.json",
+        "failedReportHash": "9d5d91106b174d2de9d70a17e9e3688e2c1100f176acf2b8e62a1373b89da253",
+        "repairWorkflowReadPath": "intent-workflows/intent-project-mutation/main-agent-repair-workflow.md",
+        "repairStartedAt": "2026-07-29T13:12:02.399Z",
+        "repairEntryStatus": "revalidated-success",
+        "ownerTriage": [
+          {
+            "owner": "main-agent",
+            "errorClass": "unknown-blocking",
+            "affectedFiles": [],
+            "repairScope": "read validation report, classify owner, then use the narrowest targeted repair",
+            "strategy": "no validator source read; targeted affected-file excerpt only"
+          },
+          {
+            "owner": "main-agent",
+            "errorClass": "unknown-blocking",
+            "affectedFiles": [],
+            "repairScope": "read validation report, classify owner, then use the narrowest targeted repair",
+            "strategy": "no validator source read; targeted affected-file excerpt only"
+          },
+          {
+            "owner": "main-agent",
+            "errorClass": "artifact-readiness",
+            "affectedFiles": [],
+            "repairScope": "repair_design_registration_or_file_reference_only",
+            "strategy": "read .design and affected file metadata only"
+          },
+          {
+            "owner": "main-agent",
+            "errorClass": "unknown-blocking",
+            "affectedFiles": [],
+            "repairScope": "read validation report, classify owner, then use the narrowest targeted repair",
+            "strategy": "no validator source read; targeted affected-file excerpt only"
+          },
+          {
+            "owner": "main-agent",
+            "errorClass": "unknown-blocking",
+            "affectedFiles": [],
+            "repairScope": "read validation report, classify owner, then use the narrowest targeted repair",
+            "strategy": "no validator source read; targeted affected-file excerpt only"
+          },
+          {
+            "owner": "main-agent",
+            "errorClass": "artifact-readiness",
+            "affectedFiles": [],
+            "repairScope": "repair_design_registration_or_file_reference_only",
+            "strategy": "read .design and affected file metadata only"
+          }
+        ],
+        "repairPlanHints": [],
+        "repairActions": [
+          {
+            "owner": "main-agent",
+            "errorClass": "unknown-blocking",
+            "affectedFiles": [
+              "runtime-orchestration-summary.json"
+            ],
+            "action": "record-dispatch-completion with toolCallLedger source and traceDigest",
+            "observedFileHashes": [
+              {
+                "path": "runtime-orchestration-summary.json",
+                "hash": "50350cd40c5d80a807c941149a251ed66f3161c4773fdd1b571c7b20be5e6a31"
+              }
+            ],
+            "preEditFileHashes": [],
+            "postEditFileHashes": [],
+            "repairOwnedFields": [
+              "unknown-blocking"
+            ],
+            "recordedAt": "2026-07-29T13:13:33.482Z",
+            "repairActionTableRequired": true
+          },
+          {
+            "owner": "main-agent",
+            "errorClass": "artifact-readiness",
+            "affectedFiles": [
+              "runtime-orchestration-summary.json"
+            ],
+            "action": "record-dispatch-completion with mainAgentPostDispatchMutations for .design",
+            "observedFileHashes": [
+              {
+                "path": "runtime-orchestration-summary.json",
+                "hash": "bf343be891601e763ab997f65cf9ea063b2cac1dcf9d24d2b8436b81e36ed6d3"
+              }
+            ],
+            "preEditFileHashes": [],
+            "postEditFileHashes": [],
+            "repairOwnedFields": [
+              "artifact-readiness"
+            ],
+            "recordedAt": "2026-07-29T13:13:33.533Z",
+            "repairActionTableRequired": true
+          }
+        ],
+        "revalidationReportPath": "validation-report.json",
+        "revalidationReportHash": "14203fd32e5ccf182e8d41bb33686dcc496c3c951da4fd75f82e2f0ecbaa0411",
+        "revalidationSuccess": true,
+        "blockedReason": null,
+        "revalidationRecordedAt": "2026-07-29T13:14:20.807Z"
+      }
+    ],
+    "lowValueCallWatchdog": {
+      "applies": true,
+      "noProgressNextAction": "proceed-to-dispatch-or-report-blocked"
+    },
+    "visualQualityCheckpoints": [
+      {
+        "checkpointId": "vq-anchor",
+        "dimension": "visual-anchor",
+        "expected": "large numeric readouts for recipe and actual values dominate first screen; machine silhouette optional in header",
+        "evidenceTarget": "pages/index.html#dashboard-content"
+      },
+      {
+        "checkpointId": "vq-hierarchy",
+        "dimension": "information-hierarchy",
+        "expected": "recipe vs actual values grouped by ring; servo inputs and homing status as secondary region; action buttons tertiary but reachable",
+        "evidenceTarget": "pages/index.html#dashboard-content"
+      },
+      {
+        "checkpointId": "vq-structure",
+        "dimension": "composition-structure",
+        "expected": "dark surface panels with subtle borders; left/right balanced layout; generous gaps; tab nav for page switching",
+        "evidenceTarget": "pages/index.html#layout"
+      },
+      {
+        "checkpointId": "vq-implementation",
+        "dimension": "implementation-strategy",
+        "expected": "shared project shell fragment + two leaf pages; CSS variables for industrial palette; Lucide icons for status indicators",
+        "evidenceTarget": "partials/project-shell.html"
+      }
+    ],
+    "readScopeLedger": [
+      {
+        "actor": "page-sub-agent",
+        "lane": "complex_html_page",
+        "path": "intent-workflows/intent-project-complex-build/complex-page-runtime.md",
+        "reason": "page runtime guide",
+        "scopeClass": "page-runtime",
+        "declaredBeforeRead": true,
+        "recordedAt": "2026-07-29T12:58:33.092Z",
+        "nodeId": "page-index",
+        "htmlSrc": "pages/index.html"
+      },
+      {
+        "actor": "page-sub-agent",
+        "lane": "complex_html_page",
+        "path": "intent-workflows/intent-project-complex-build/complex-page-dispatch-contract.md",
+        "reason": "dispatch contract",
+        "scopeClass": "dispatch-contract",
+        "declaredBeforeRead": true,
+        "recordedAt": "2026-07-29T12:58:33.092Z",
+        "nodeId": "page-index",
+        "htmlSrc": "pages/index.html"
+      }
+    ],
+    "repairEntryEvidence": [
+      {
+        "failedReportPath": "validation-report.json",
+        "failedReportHash": "9d5d91106b174d2de9d70a17e9e3688e2c1100f176acf2b8e62a1373b89da253",
+        "repairWorkflowReadPath": "intent-workflows/intent-project-mutation/main-agent-repair-workflow.md",
+        "repairStartedAt": "2026-07-29T13:12:02.399Z",
+        "ledgerIndex": 0,
+        "ownerTriageCount": 6,
+        "repairActionCount": 2,
+        "revalidationReportPath": "validation-report.json",
+        "revalidationReportHash": "14203fd32e5ccf182e8d41bb33686dcc496c3c951da4fd75f82e2f0ecbaa0411",
+        "revalidationSuccess": true
+      }
+    ],
+    "mainAgentPostDispatchMutations": [
+      {
+        "path": "spike-roller-hmi.design",
+        "reason": "registered page node and navigation interactions after page generation",
+        "owner": "main-agent",
+        "recordedAt": "2026-07-29T13:13:05.283Z",
+        "source": "record-dispatch-completion.mjs"
+      }
+    ]
+  },
+  "designSource": {
+    "operatingMode": "free-explore",
+    "cssFilePath": "colors_and_type.css",
+    "brandPrefix": "sr",
+    "styleConstraints": {
+      "radiusMax": 16,
+      "staticShadowAlphaMax": 0.05,
+      "allowSecondaryAccent": false
+    }
+  },
+  "pages": [
+    {
+      "nodeId": "page-index",
+      "title": "刺辊监控",
+      "htmlSrc": "pages/index.html",
+      "pageIndex": 1,
+      "pageType": "information-dense",
+      "deviceType": "desktop",
+      "viewportMode": "document-scroll",
+      "visualNorthStar": "工业HMI仪表盘：大而清晰的配方/实际值读数，状态一目了然，按钮适合触屏操作。",
+      "compositionPattern": "dashboard-kpi-left-right",
+      "continuityAnchors": [
+        "header-brand-and-title",
+        "top-tab-navigation",
+        "surface-card-style",
+        "cyan-primary-cta",
+        "mono-numeric-readouts"
+      ],
+      "qualityRisks": [
+        "density",
+        "industrial-readability"
+      ],
+      "domIdsRequired": [
+        "nav-alarms",
+        "btn-calibrate",
+        "btn-settings",
+        "btn-maintenance",
+        "input-servo-1",
+        "input-servo-2"
+      ],
+      "imagePlan": [],
+      "chartsRequired": false,
+      "miniProgramStyle": false
+    },
+    {
+      "nodeId": "page-alarms",
+      "title": "报警记录",
+      "htmlSrc": "pages/alarms.html",
+      "pageIndex": 2,
+      "pageType": "information-dense",
+      "deviceType": "desktop",
+      "viewportMode": "document-scroll",
+      "visualNorthStar": "与主页面同色的报警列表：时间轴式行布局，突出报警内容，便于快速扫描。",
+      "compositionPattern": "list-table-with-sticky-header",
+      "continuityAnchors": [
+        "header-brand-and-title",
+        "top-tab-navigation",
+        "surface-card-style",
+        "cyan-primary-cta",
+        "row-separator-tokens"
+      ],
+      "qualityRisks": [
+        "density",
+        "table-readability"
+      ],
+      "domIdsRequired": [
+        "nav-monitor"
+      ],
+      "imagePlan": [],
+      "chartsRequired": false,
+      "miniProgramStyle": false
+    }
+  ],
+  "assets": []
+}

@@ -1,0 +1,26 @@
+﻿=== Task 2 QA: MomentaryButtonBehavior event-hook grep ===
+Date: 2026-09-27 11:43:15
+
+--- Select-String (PreviewMouseLeftButtonDown|PreviewMouseLeftButtonUp|LostMouseCapture) in Behaviors\MomentaryButtonBehavior.cs ---
+75: button.PreviewMouseLeftButtonDown -= OnPreviewMouseLeftButtonDown;
+76: button.PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp;
+77: button.LostMouseCapture -= OnLostMouseCapture;
+82: button.PreviewMouseLeftButtonDown += OnPreviewMouseLeftButtonDown;
+83: button.PreviewMouseLeftButtonUp += OnPreviewMouseLeftButtonUp;
+84: button.LostMouseCapture += OnLostMouseCapture;
+90: private static void OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+108: private static void OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+113: private static void OnLostMouseCapture(object sender, MouseEventArgs e)
+
+--- Build tail: dotnet build F:\CX102PrickHMI\CX102PrickHMI.sln -c Debug --nologo ---
+  Determining projects to restore...
+  Nothing to do. None of the projects specified contain packages to restore.
+  RID is: 
+  Platform is: x64
+  CX102PrickHMI -> F:\CX102PrickHMI\CX102PrickHMI\bin\Debug\CX102PrickHMI.exe
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.51

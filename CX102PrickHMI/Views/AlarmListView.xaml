@@ -1,0 +1,92 @@
+<UserControl
+    x:Class="CX102PrickHMI.Views.AlarmListView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:CX102PrickHMI.ViewModels"
+    d:DataContext="{d:DesignInstance Type=vm:AlarmListViewModel}"
+    Background="{StaticResource PageBackground}"
+    mc:Ignorable="d">
+    <Grid Margin="24,0,24,24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock
+            Margin="0,20,0,12"
+            FontSize="20"
+            FontWeight="SemiBold"
+            Foreground="{StaticResource Ink}"
+            Text="报警记录" />
+        <Border
+            Grid.Row="1"
+            Padding="0"
+            Style="{StaticResource PanelStyle}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Border Padding="16,12" Background="{StaticResource Surface2}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="4*" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource TableHeaderTextStyle}" Text="报警时间" />
+                        <TextBlock
+                            Grid.Column="1"
+                            Style="{StaticResource TableHeaderTextStyle}"
+                            Text="报警内容" />
+                        <TextBlock
+                            Grid.Column="2"
+                            Style="{StaticResource TableHeaderTextStyle}"
+                            Text="级别" />
+                    </Grid>
+                </Border>
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding AlarmItems}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border
+                                    Padding="16,13"
+                                    BorderBrush="{StaticResource Line}"
+                                    BorderThickness="0,0,0,1">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="2*" />
+                                            <ColumnDefinition Width="4*" />
+                                            <ColumnDefinition Width="1*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource MonoTableCellTextStyle}" Text="{Binding Time}" />
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            Style="{StaticResource TableCellTextStyle}"
+                                            Text="{Binding Message}" />
+                                        <TextBlock
+                                            Grid.Column="2"
+                                            Foreground="{StaticResource Warning}"
+                                            Style="{StaticResource TableCellTextStyle}"
+                                            Text="{Binding Level}" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+                <Border
+                    Grid.Row="2"
+                    Padding="16,12"
+                    Background="{StaticResource Surface}">
+                    <TextBlock
+                        FontSize="12"
+                        Foreground="{StaticResource Ink3}"
+                        Text="共 6 条报警记录 · 实时更新" />
+                </Border>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

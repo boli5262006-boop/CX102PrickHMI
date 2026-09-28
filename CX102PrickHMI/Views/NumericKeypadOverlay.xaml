@@ -1,0 +1,243 @@
+<UserControl
+    x:Class="CX102PrickHMI.Views.NumericKeypadOverlay"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
+        <Style x:Key="KeypadKeyStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource Surface2}" />
+            <Setter Property="Foreground" Value="{StaticResource Ink}" />
+            <Setter Property="BorderBrush" Value="{StaticResource Border}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="MinHeight" Value="52" />
+            <Setter Property="Margin" Value="3" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource Surface3}" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="{StaticResource Surface3}" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.5" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="KeypadConfirmStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource Primary}" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderBrush" Value="{StaticResource PrimaryDark}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="MinHeight" Value="52" />
+            <Setter Property="Margin" Value="3" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource PrimaryDark}" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="{StaticResource PrimaryDark}" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.5" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Visibility="{Binding KeypadVisible, Converter={StaticResource BoolToVis}}">
+        <!--  Layer 1: translucent backdrop  -->
+        <Border Background="#A60F1115" />
+
+        <!--  Layer 2: centered card  -->
+        <Border
+            Width="380"
+            Padding="20"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Background="{StaticResource Surface}"
+            BorderBrush="{StaticResource Border}"
+            BorderThickness="1"
+            CornerRadius="12">
+            <StackPanel>
+                <TextBlock
+                    Margin="0,0,0,12"
+                    HorizontalAlignment="Center"
+                    FontSize="16"
+                    Foreground="{StaticResource Ink}"
+                    Text="{Binding KeypadTargetText}" />
+
+                <Border
+                    Margin="0,0,0,6"
+                    Padding="12,8"
+                    Background="{StaticResource Surface2}"
+                    CornerRadius="8">
+                    <TextBlock
+                        FontFamily="Consolas"
+                        FontSize="30"
+                        Foreground="{StaticResource Ink}"
+                        Text="{Binding KeypadEditValue}"
+                        TextAlignment="Right" />
+                </Border>
+
+                <TextBlock
+                    Margin="0,0,0,6"
+                    FontSize="12"
+                    Foreground="{StaticResource Error}"
+                    Text="{Binding KeypadErrorText}"
+                    Visibility="{Binding KeypadHasError, Converter={StaticResource BoolToVis}}" />
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Button
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Command="{Binding KeypadDigitCommand}"
+                        CommandParameter="7"
+                        Content="7"
+                        Style="{StaticResource KeypadKeyStyle}" />
+                    <Button
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Command="{Binding KeypadDigitCommand}"
+                        CommandParameter="8"
+                        Content="8"
+                        Style="{StaticResource KeypadKeyStyle}" />
+                    <Button
+                        Grid.Row="0"
+                        Grid.Column="2"
+                        Command="{Binding KeypadDigitCommand}"
+                        CommandParameter="9"
+                        Content="9"
+                        Style="{StaticResource KeypadKeyStyle}" />
+
+                    <Button
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Command="{Binding KeypadDigitCommand}"
+                        CommandParameter="4"
+                        Content="4"
+                        Style="{StaticResource KeypadKeyStyle}" />
+                    <Button
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Command="{Binding KeypadDigitCommand}"
+                        CommandParameter="5"
+                        Content="5"
+                        Style="{StaticResource KeypadKeyStyle}" />
+                    <Button
+                        Grid.Row="1"
+                        Grid.Column="2"
+                        Command="{Binding KeypadDigitCommand}"
+                        CommandParameter="6"
+                        Content="6"
+                        Style="{StaticResource KeypadKeyStyle}" />
+
+                    <Button
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Command="{Binding KeypadDigitCommand}"
+                        CommandParameter="1"
+                        Content="1"
+                        Style="{StaticResource KeypadKeyStyle}" />
+                    <Button
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Command="{Binding KeypadDigitCommand}"
+                        CommandParameter="2"
+                        Content="2"
+                        Style="{StaticResource KeypadKeyStyle}" />
+                    <Button
+                        Grid.Row="2"
+                        Grid.Column="2"
+                        Command="{Binding KeypadDigitCommand}"
+                        CommandParameter="3"
+                        Content="3"
+                        Style="{StaticResource KeypadKeyStyle}" />
+
+                    <Button
+                        Grid.Row="3"
+                        Grid.Column="0"
+                        Command="{Binding KeypadDigitCommand}"
+                        CommandParameter="."
+                        Content="."
+                        Style="{StaticResource KeypadKeyStyle}" />
+                    <Button
+                        Grid.Row="3"
+                        Grid.Column="1"
+                        Command="{Binding KeypadDigitCommand}"
+                        CommandParameter="0"
+                        Content="0"
+                        Style="{StaticResource KeypadKeyStyle}" />
+                    <Button
+                        Grid.Row="3"
+                        Grid.Column="2"
+                        Command="{Binding KeypadBackspaceCommand}"
+                        Content="⌫"
+                        Style="{StaticResource KeypadKeyStyle}" />
+                </Grid>
+
+                <Button
+                    Margin="3,9,3,3"
+                    Command="{Binding KeypadClearCommand}"
+                    Content="C 清空"
+                    Style="{StaticResource KeypadKeyStyle}" />
+
+                <UniformGrid Columns="2">
+                    <Button
+                        Margin="3,9,3,3"
+                        Command="{Binding ConfirmKeypadCommand}"
+                        Content="确认"
+                        Style="{StaticResource KeypadConfirmStyle}" />
+                    <Button
+                        Margin="3,9,3,3"
+                        Command="{Binding CancelKeypadCommand}"
+                        Content="取消"
+                        Style="{StaticResource KeypadKeyStyle}" />
+                </UniformGrid>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

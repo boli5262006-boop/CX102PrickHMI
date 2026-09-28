@@ -1,0 +1,524 @@
+================================================================================
+FINAL QA RUN — 搭接量监控 page runtime QA (RUNTIME QA, hands-on evidence)
+Date:    2026-09-07
+Target:  F:\CX102PrickHMI (CX102PrickHMI.sln, .NET Framework 4.7.2 WPF, MVVM)
+Plan:    .omo/plans/overlap-monitor-page.md
+Method:  dotnet build + Start-Process with stdout/stderr redirect +
+         PowerShell System.Windows.Automation (UIA), PID-scoped. No web tools.
+================================================================================
+
+=== CHECK 1: BUILD =============================================================
+Command : dotnet build "CX102PrickHMI.sln" --no-restore  (cwd F:\CX102PrickHMI)
+Output  : CX102PrickHMI -> F:\CX102PrickHMI\CX102PrickHMI\bin\Debug\CX102PrickHMI.exe
+          Build succeeded. 0 Warning(s), 0 Error(s). Time Elapsed 00:00:00.39
+RESULT  : PASS
+
+=== CHECK 2: PROCESS LAUNCH / STABILITY ========================================
+Exe freshness : LastWriteTime = 2026-09-07 00:26:17 (today), Size = 3,678,208 bytes
+Launch        : Start-Process CX102PrickHMI.exe -WorkingDirectory bin\Debug
+                -RedirectStandardOutput -RedirectStandardError
+PID           : 9760
+HasExited     : False (process alive after 8s sleep; re-verified alive at UIA
+                start: PROCESS_ALIVE=True HasExited=False, and after all UIA
+                interactions: PROCESS_ALIVE_AFTER_UIA=True)
+Window title  : 刺辊自动化监控系统
+stdout bytes  : 0
+stderr bytes  : 0  => no Exception / XamlParseException in stderr
+Cleanup       : Stop-Process -Force via UIA script finally-block; verified
+                Get-Process -Id 9760 => $null (PROC_STILL_ALIVE=False)
+RESULT        : PASS
+
+=== CHECK 3: UIA (PowerShell + System.Windows.Automation) ======================
+Main window located by ProcessId=9760 under RootElement: True
+
+--- 3a. Button enumeration on main window --------------------------------------
+All buttons found (8): × | 刺辊监控 | 搭接量监控 | 报警记录 | 历史报警 | 校准 | 设置 | 维修模式
+Expected nav set — each found exactly once (count=1):
+  刺辊监控    : FOUND
+  搭接量监控  : FOUND
+  报警记录    : FOUND
+  历史报警    : FOUND
+  ×           : FOUND
+Non-nav extras (3): 校准 | 设置 | 维修模式
+  NOTE: these are in-page action buttons on the 刺辊监控 page content
+  (伺服控制 panel), not navigation buttons. The nav bar itself contains
+  exactly the 5 expected buttons.
+RESULT: PASS
+
+--- 3b. 搭接量监控 page (Invoke button 搭接量监控, wait 1s) ----------------------
+INVOKE_OK: [搭接量监控]
+FOUND (13): 搭接量监控 | MATERIAL OVERLAP MONITOR | P-01 | P-02 | P-03 |
+            4.2 | 7.3 | 3.8 | NORMAL | ALARM | SYS-ID: MLO-2026-A | 超限 | 报警
+MISSING (1): 标准: 4±2mm
+  EXPLANATION: the expected string is split across two separate UIA Text
+  elements: "标准: " and "4±2mm" (rendered adjacently; repeated for all three
+  gauges P-01/P-02/P-03). Content is fully present — the miss is a UIA
+  element-boundary artifact, not missing UI content. Footer also contains the
+  full unsplit string "标准范围: 4±2mm".
+Additional verifications from the text dump:
+  - Alarm bar present: "报警 | ALARM: P-02 中段搭接量超出标准范围 (4±2mm)"
+    (matches task's "报警 | ALARM...")
+  - Overlimit badge present, exact: "+3.3 超限" (P-02); P-01 shows "+0.2",
+    P-03 shows "-0.2"; statuses NORMAL/ALARM/NORMAL
+  - Schematic blocks "搭接示意 / OVERLAP SCHEMATIC", 材料A/材料B, values
+    4.2mm / 7.3mm / 3.8mm, axis scales 0/2/4/6/8/10
+  - Reset button: "重置报警 / RESET ALARM"
+  - Footer: "SYS-ID: MLO-2026-A | 采样频率: 10Hz | 标准范围: 4±2mm |
+    传感器: 激光测距 x3"
+RESULT: PASS (all required content present)
+
+--- 3c. 报警记录 page (Invoke 报警记录, wait 1s) ---------------------------------
+INVOKE_OK: [报警记录]
+FOUND (1): 报警时间
+Additional: 报警内容 | 级别 headers; 6 records (2026-07-29 08:23:15 伺服1 回原超时/警告,
+  刺针环1 实际位置偏差过大/错误, 伺服2 编码器通讯异常/错误, 气压不足/警告,
+  刺针环2 配方值已更新/信息, 系统启动完成/信息); "共 6 条报警记录 · 实时更新"
+MISSING (0): (none)
+TEXTSET_CHANGED from previous page: True
+RESULT: PASS
+
+--- 3d. 历史报警 page (Invoke 历史报警, wait 1s) ---------------------------------
+INVOKE_OK: [历史报警]
+FOUND (1): 历史报警
+Additional: 日期范围/至/查询/导出; headers 报警时间|报警内容|级别|恢复时间;
+  8 records with recovery times; "共 8 条历史记录 · 2026-07-01 至 2026-07-29";
+  "第 1 / 1 页"
+MISSING (0): (none)
+TEXTSET_CHANGED from 报警记录 page: True  (page switching works)
+RESULT: PASS
+
+--- 3e. Back to 刺辊监控 (Invoke 刺辊监控, wait 1s) ------------------------------
+INVOKE_OK: [刺辊监控]
+FOUND (1): 当前配方值
+Additional: 刺针环1 125.00 mm | 刺针环2 198.50 mm | 当前实际值 124.98 / 198.52 mm |
+  伺服控制 | 设备状态 | 报警 0 条 | v1.0.0
+MISSING (0): (none)
+RESULT: PASS
+
+--- 3f. Post-interaction process state ------------------------------------------
+PROCESS_ALIVE_AFTER_UIA=True; then Stop-Process succeeded (no remaining process)
+RESULT: PASS
+
+=== VERDICT ====================================================================
+PASS — build clean, app stable (8s+ alive, stderr clean), nav bar = exactly the
+5 expected buttons, 搭接量监控 page renders all required texts/values/alarm bar,
+报警记录 / 历史报警 / 刺辊监控 page switching all work, all started processes killed.
+
+Caveats (non-failing):
+1. "标准: 4±2mm" exists as two adjacent UIA text elements ("标准: " + "4±2mm").
+2. Buttons 校准/设置/维修模式 are main-page action buttons, additional to the
+   5 nav buttons (not a navigation defect).
+
+================================================================================
+APPENDIX — FULL RAW UIA DUMP (C:\Users\bobo\AppData\Local\Temp\opencode\uia_results.txt)
+================================================================================
+PROCESS_ALIVE=True HasExited=False Name=CX102PrickHMI
+MAINWINDOW_FOUND=True Name=刺辊自动化监控系统
+BUTTONS_TOTAL(8): × | 刺辊监控 | 搭接量监控 | 报警记录 | 历史报警 | 校准 | 设置 | 维修模式
+NAV_BUTTON [刺辊监控] count=1 => FOUND
+NAV_BUTTON [搭接量监控] count=1 => FOUND
+NAV_BUTTON [报警记录] count=1 => FOUND
+NAV_BUTTON [历史报警] count=1 => FOUND
+NAV_BUTTON [×] count=1 => FOUND
+EXTRA_NONNAV_BUTTONS(3): 校准 | 设置 | 维修模式
+--- PAGE 1_INITIAL_MAIN TEXTS(66) ---
+T: ⚙
+T: 刺辊自动化监控
+T: Prick Roller Automation HMI
+T: 主线运行中
+T: --:--:--
+T: ×
+T: 刺辊监控
+T: 搭接量监控
+T: 报警记录
+T: 历史报警
+T: 1
+T: 主线停机
+T: 已完成
+T: 2
+T: 配方加载
+T: 已完成
+T: 3
+T: 离合松开
+T: 已完成
+T: 4
+T: 槽辊打开
+T: 已完成
+T: 5
+T: 夹紧到位
+T: 进行中
+T: 6
+T: 位置到达
+T: 未开始
+T: 7
+T: 槽辊收回
+T: 未开始
+T: 8
+T: 离合夹紧
+T: 未开始
+T: 9
+T: 完成
+T: 未开始
+T: 刺辊监控
+T: 当前配方值
+T: 刺针环1
+T: 125.00 mm
+T: 刺针环2
+T: 198.50 mm
+T: 当前实际值
+T: 刺针环1
+T: 124.98 mm
+T: 刺针环2
+T: 198.52 mm
+T: 伺服控制
+T: 伺服1 测量当前实际值
+T: 伺服2 测量当前实际值
+T: 校准
+T: 设置
+T: 维修模式
+T: 模拟数据 · 未连接设备
+T: 伺服1 回原
+T: 已回原
+T: 伺服2 回原
+T: 未回原
+T: 设备状态
+T: 系统运行中
+T: 伺服1 已使能
+T: 伺服2 未使能
+T: 报警 0 条
+T: 设备在线 · PLC 连接正常
+T: v1.0.0
+FOUND(1): 当前配方值
+MISSING(0): (none)
+TEXTSET_CHANGED: True
+INVOKE_OK: [搭接量监控]
+--- PAGE 2_OVERLAP TEXTS(98) ---
+T: ⚙
+T: 刺辊自动化监控
+T: Prick Roller Automation HMI
+T: 主线运行中
+T: --:--:--
+T: ×
+T: 刺辊监控
+T: 搭接量监控
+T: 报警记录
+T: 历史报警
+T: 1
+T: 主线停机
+T: 已完成
+T: 2
+T: 配方加载
+T: 已完成
+T: 3
+T: 离合松开
+T: 已完成
+T: 4
+T: 槽辊打开
+T: 已完成
+T: 5
+T: 夹紧到位
+T: 已完成
+T: 6
+T: 位置到达
+T: 进行中
+T: 7
+T: 槽辊收回
+T: 未开始
+T: 8
+T: 离合夹紧
+T: 未开始
+T: 9
+T: 完成
+T: 未开始
+T: 搭接量监控
+T: MATERIAL OVERLAP MONITOR
+T: 报警 | ALARM: P-02 中段搭接量超出标准范围 (4±2mm)
+T: NORMAL
+T: P-01
+T: 前段搭接 / FRONT
+T: 0
+T: 2
+T: 4
+T: 6
+T: 8
+T: 10
+T: 4.2
+T: mm | 搭接量
+T: 搭接示意 / OVERLAP SCHEMATIC
+T: 材料A
+T: 材料B
+T: 4.2mm
+T: 标准: 
+T: 4±2mm
+T: +0.2
+T: ALARM
+T: P-02
+T: 中段搭接 / CENTER
+T: 0
+T: 2
+T: 4
+T: 6
+T: 8
+T: 10
+T: 7.3
+T: mm | 搭接量
+T: 搭接示意 / OVERLAP SCHEMATIC
+T: 材料A
+T: 材料B
+T: 7.3mm
+T: 标准: 
+T: 4±2mm
+T: +3.3 超限
+T: NORMAL
+T: P-03
+T: 后段搭接 / REAR
+T: 0
+T: 2
+T: 4
+T: 6
+T: 8
+T: 10
+T: 3.8
+T: mm | 搭接量
+T: 搭接示意 / OVERLAP SCHEMATIC
+T: 材料A
+T: 材料B
+T: 3.8mm
+T: 标准: 
+T: 4±2mm
+T: -0.2
+T: 重置报警 / RESET ALARM
+T: SYS-ID: MLO-2026-A | 采样频率: 10Hz | 标准范围: 4±2mm | 传感器: 激光测距 x3
+T: 设备在线 · PLC 连接正常
+T: v1.0.0
+FOUND(13): 搭接量监控 | MATERIAL OVERLAP MONITOR | P-01 | P-02 | P-03 | 4.2 | 7.3 | 3.8 | NORMAL | ALARM | SYS-ID: MLO-2026-A | 超限 | 报警
+MISSING(1): 标准: 4±2mm
+TEXTSET_CHANGED: True
+INVOKE_OK: [报警记录]
+--- PAGE 3_ALARMLOG TEXTS(62) ---
+T: ⚙
+T: 刺辊自动化监控
+T: Prick Roller Automation HMI
+T: 主线运行中
+T: --:--:--
+T: ×
+T: 刺辊监控
+T: 搭接量监控
+T: 报警记录
+T: 历史报警
+T: 1
+T: 主线停机
+T: 已完成
+T: 2
+T: 配方加载
+T: 已完成
+T: 3
+T: 离合松开
+T: 已完成
+T: 4
+T: 槽辊打开
+T: 已完成
+T: 5
+T: 夹紧到位
+T: 已完成
+T: 6
+T: 位置到达
+T: 已完成
+T: 7
+T: 槽辊收回
+T: 已完成
+T: 8
+T: 离合夹紧
+T: 进行中
+T: 9
+T: 完成
+T: 未开始
+T: 报警记录
+T: 报警时间
+T: 报警内容
+T: 级别
+T: 2026-07-29 08:23:15
+T: 伺服1 回原超时
+T: 警告
+T: 2026-07-29 09:10:42
+T: 刺针环1 实际位置偏差过大
+T: 错误
+T: 2026-07-29 10:05:03
+T: 伺服2 编码器通讯异常
+T: 错误
+T: 2026-07-29 11:18:27
+T: 气压不足，请检查气源
+T: 警告
+T: 2026-07-29 13:44:56
+T: 刺针环2 配方值已更新
+T: 信息
+T: 2026-07-29 14:02:11
+T: 系统启动完成
+T: 信息
+T: 共 6 条报警记录 · 实时更新
+T: 设备在线 · PLC 连接正常
+T: v1.0.0
+FOUND(1): 报警时间
+MISSING(0): (none)
+TEXTSET_CHANGED: True
+INVOKE_OK: [历史报警]
+--- PAGE 4_HISTORY TEXTS(82) ---
+T: ⚙
+T: 刺辊自动化监控
+T: Prick Roller Automation HMI
+T: 主线运行中
+T: --:--:--
+T: ×
+T: 刺辊监控
+T: 搭接量监控
+T: 报警记录
+T: 历史报警
+T: 1
+T: 主线停机
+T: 已完成
+T: 2
+T: 配方加载
+T: 已完成
+T: 3
+T: 离合松开
+T: 已完成
+T: 4
+T: 槽辊打开
+T: 异常
+T: 5
+T: 夹紧到位
+T: 未开始
+T: 6
+T: 位置到达
+T: 未开始
+T: 7
+T: 槽辊收回
+T: 未开始
+T: 8
+T: 离合夹紧
+T: 未开始
+T: 9
+T: 完成
+T: 未开始
+T: 历史报警
+T: 日期范围
+T: 至
+T: 查询
+T: 导出
+T: 报警时间
+T: 报警内容
+T: 级别
+T: 恢复时间
+T: 2026-07-28 02:14:33
+T: 伺服1 过载保护触发
+T: 错误
+T: 2026-07-28 02:31:08
+T: 2026-07-27 15:46:20
+T: 刺针环2 位置传感器信号丢失
+T: 错误
+T: 2026-07-27 16:02:45
+T: 2026-07-27 09:22:10
+T: 冷却液温度偏高
+T: 警告
+T: 2026-07-27 09:38:52
+T: 2026-07-26 21:05:47
+T: 伺服2 回原超时
+T: 警告
+T: 2026-07-26 21:19:33
+T: 2026-07-26 14:33:18
+T: 刺针环1 实际位置偏差过大
+T: 错误
+T: 2026-07-26 14:50:01
+T: 2026-07-25 18:12:55
+T: 气压不足，请检查气源
+T: 警告
+T: 2026-07-25 18:27:40
+T: 2026-07-25 08:40:12
+T: 配方参数已更新
+T: 信息
+T: —
+T: 2026-07-24 22:18:39
+T: 系统紧急停止按钮按下
+T: 错误
+T: 2026-07-24 22:25:17
+T: 共 8 条历史记录 · 2026-07-01 至 2026-07-29
+T: 第 1 / 1 页
+T: 设备在线 · PLC 连接正常
+T: v1.0.0
+FOUND(1): 历史报警
+MISSING(0): (none)
+TEXTSET_CHANGED: True
+INVOKE_OK: [刺辊监控]
+--- PAGE 5_BACK_MAIN TEXTS(66) ---
+T: ⚙
+T: 刺辊自动化监控
+T: Prick Roller Automation HMI
+T: 主线运行中
+T: --:--:--
+T: ×
+T: 刺辊监控
+T: 搭接量监控
+T: 报警记录
+T: 历史报警
+T: 1
+T: 主线停机
+T: 已完成
+T: 2
+T: 配方加载
+T: 已完成
+T: 3
+T: 离合松开
+T: 已完成
+T: 4
+T: 槽辊打开
+T: 已完成
+T: 5
+T: 夹紧到位
+T: 进行中
+T: 6
+T: 位置到达
+T: 未开始
+T: 7
+T: 槽辊收回
+T: 未开始
+T: 8
+T: 离合夹紧
+T: 未开始
+T: 9
+T: 完成
+T: 未开始
+T: 刺辊监控
+T: 当前配方值
+T: 刺针环1
+T: 125.00 mm
+T: 刺针环2
+T: 198.50 mm
+T: 当前实际值
+T: 刺针环1
+T: 124.98 mm
+T: 刺针环2
+T: 198.52 mm
+T: 伺服控制
+T: 伺服1 测量当前实际值
+T: 伺服2 测量当前实际值
+T: 校准
+T: 设置
+T: 维修模式
+T: 模拟数据 · 未连接设备
+T: 伺服1 回原
+T: 已回原
+T: 伺服2 回原
+T: 未回原
+T: 设备状态
+T: 系统运行中
+T: 伺服1 已使能
+T: 伺服2 未使能
+T: 报警 0 条
+T: 设备在线 · PLC 连接正常
+T: v1.0.0
+FOUND(1): 当前配方值
+MISSING(0): (none)
+TEXTSET_CHANGED: True
+PROCESS_ALIVE_AFTER_UIA=True
+
+=== END OF EVIDENCE ===

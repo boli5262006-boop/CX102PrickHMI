@@ -1,0 +1,11 @@
+﻿=== Task 2 QA: build + run scenario (DEFERRED per task instructions) ===
+Generated: 2026-09-07 00:17:06
+
+dotnet build CX102PrickHMI.sln is intentionally NOT run here: the old-style csproj does not yet include OverlapMonitorView entries (Task 3 owns csproj wiring), so the build would fail with CS0103/MC3074 by design.
+Task 2 scope per plan item 2 + task CONTEXT: XML well-formedness + zero-binding + value fidelity + XamlReader deep parse verified; full build + 7s process-run verification is executed in Task 3/4.
+
+Related evidence:
+  task-2-xml-wellformed.txt
+  task-2-no-binding.txt
+  task-2-values.txt
+  task-2-xaml-parse.txt

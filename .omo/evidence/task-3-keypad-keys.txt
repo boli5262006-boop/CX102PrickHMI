@@ -1,0 +1,20 @@
+﻿=== UTF-8 re-verification (file read as UTF-8) ===
+confirm '确认' at line 150: Content="确认"
+cancel '取消' at line 154: Content="取消"
+clear '清空' at line 144: Content="C 清空"
+=== UTF-8 re-verification (console mojibake above is display-only; file read as UTF-8 below) ===
+
+=== Build: dotnet build F:\CX102PrickHMI\CX102PrickHMI.sln -c Debug --nologo ===
+  Platform is: x64
+  CX102PrickHMI -> F:\CX102PrickHMI\CX102PrickHMI\bin\Debug\CX102PrickHMI.exe
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.64
+
+=== csproj registration ===
+201: <Page Include="Views\NumericKeypadOverlay.xaml">
+218: <Compile Include="Views\NumericKeypadOverlay.xaml.cs">
+219: <DependentUpon>NumericKeypadOverlay.xaml</DependentUpon>

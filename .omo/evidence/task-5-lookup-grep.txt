@@ -1,0 +1,25 @@
+Task 5 QA evidence - PlcTagLookup helper
+File: F:\CX102PrickHMI\CX102PrickHMI\Utilities\PlcTagLookup.cs
+Date: 2026-09-27 11:42:11
+
+== Grep GroupList / VarList / VarAddress / VarName ==
+line 12: /// 遍历设备的所有 GroupList.VarList，按变量名（忽略大小写）查找对应的变量地址。
+line 15: /// <param name="varName">要查找的变量名。</param>
+line 18: public static bool TryGetAddress(OPCUADevice device, string varName, out string address)
+line 20: if (device == null || string.IsNullOrWhiteSpace(varName))
+line 26: if (device.GroupList != null)
+line 28: foreach (var group in device.GroupList)
+line 30: if (group == null || group.VarList == null)
+line 35: foreach (var variable in group.VarList)
+line 42: if (string.Equals(variable.VarName, varName, StringComparison.OrdinalIgnoreCase))
+line 44: address = variable.VarAddress;
+
+== Check hardcoded group literal 'Alarm' ==
+NO occurrences of 'Alarm' - PASS
+
+== Build tail (dotnet build CX102PrickHMI.sln -c Debug --nologo) ==
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.56

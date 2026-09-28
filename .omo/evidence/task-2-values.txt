@@ -1,0 +1,19 @@
+﻿=== Task 2 QA: value fidelity check ===
+File: F:\CX102PrickHMI\CX102PrickHMI\Views\OverlapMonitorView.xaml
+Pattern: 4\.2|7\.3|3\.8|4±2mm|\+3\.3 超限
+Hits: 13 (expected 12)
+
+Line 148: Text="报警 | ALARM: P-02 中段搭接量超出标准范围 (4±2mm)" />
+Line 286: Data="M 45 140 A 75 75 0 0 1 101.35 47.36"
+Line 332: Text="4.2">
+Line 379: <TextBlock Canvas.Left="169" Canvas.Top="20" Width="62" FontFamily="Consolas" FontSize="10" Foreground="{StaticResource Success}" TextAlignment="Center" Text="4.2mm" />
+Line 396: <TextBlock FontSize="10" FontWeight="Bold" Foreground="{StaticResource Ink2}" Text="4±2mm" />
+Line 616: Text="7.3">
+Line 663: <TextBlock Canvas.Left="155" Canvas.Top="20" Width="88" FontFamily="Consolas" FontSize="10" Foreground="{StaticResource Error}" TextAlignment="Center" Text="7.3mm" />
+Line 680: <TextBlock FontSize="10" FontWeight="Bold" Foreground="{StaticResource Ink2}" Text="4±2mm" />
+Line 688: Text="+3.3 超限" />
+Line 865: Text="3.8">
+Line 912: <TextBlock Canvas.Left="176" Canvas.Top="20" Width="48" FontFamily="Consolas" FontSize="10" Foreground="{StaticResource Success}" TextAlignment="Center" Text="3.8mm" />
+Line 929: <TextBlock FontSize="10" FontWeight="Bold" Foreground="{StaticResource Ink2}" Text="4±2mm" />
+Line 971: <TextBlock HorizontalAlignment="Center" FontSize="11" Foreground="{StaticResource Ink3}" Text="SYS-ID: MLO-2026-A | 采样频率: 10Hz | 标准范围: 4±2mm | 传感器: 激光测距 x3" />
+Result: CHECK

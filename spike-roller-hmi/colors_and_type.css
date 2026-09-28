@@ -1,0 +1,77 @@
+:root {
+  /* Industrial clean dark palette */
+  --sr-bg: #0f1115;
+  --sr-surface: #1a1d23;
+  --sr-surface-2: #232730;
+  --sr-surface-3: #2d333c;
+
+  --sr-ink: #f0f1f3;
+  --sr-ink-2: #9ca3af;
+  --sr-ink-3: #6b7280;
+
+  --sr-line: #2d3139;
+  --sr-border: #3a3f49;
+
+  /* Single brand hue: industrial cyan */
+  --sr-brand: #0ea5e9;
+  --sr-brand-600: #0284c7;
+  --sr-brand-400: #38bdf8;
+  --sr-brand-ink: #ffffff;
+
+  /* Semantic state colors */
+  --sr-success: #22c55e;
+  --sr-warning: #f59e0b;
+  --sr-error: #ef4444;
+  --sr-info: #3b82f6;
+
+  /* Radius scale */
+  --sr-radius-sm: 4px;
+  --sr-radius-md: 8px;
+  --sr-radius-lg: 12px;
+  --sr-radius-full: 9999px;
+
+  /* Typography */
+  --sr-font-sans: "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --sr-font-mono: "JetBrains Mono", "SF Mono", "Menlo", monospace;
+
+  /* Spacing */
+  --sr-space-1: 4px;
+  --sr-space-2: 8px;
+  --sr-space-3: 12px;
+  --sr-space-4: 16px;
+  --sr-space-5: 24px;
+  --sr-space-6: 32px;
+
+  /* Shadows */
+  --sr-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --sr-shadow-2: 0 8px 24px -8px rgba(0, 0, 0, 0.35);
+
+  /* Semantic aliases for head contract */
+  --sr-background: var(--sr-bg);
+  --sr-foreground: var(--sr-ink);
+  --sr-card: var(--sr-surface);
+  --sr-card-foreground: var(--sr-ink);
+  --sr-popover: var(--sr-surface-2);
+  --sr-popover-foreground: var(--sr-ink);
+  --sr-primary: var(--sr-brand);
+  --sr-primary-foreground: var(--sr-brand-ink);
+  --sr-muted: var(--sr-surface-2);
+  --sr-muted-foreground: var(--sr-ink-2);
+  --sr-input: var(--sr-surface-2);
+  --sr-ring: var(--sr-brand);
+  --sr-radius-small: var(--sr-radius-sm);
+  --sr-radius-medium: var(--sr-radius-md);
+  --sr-radius-large: var(--sr-radius-lg);
+}
+
+.light {
+  --sr-background: #f8f9fa;
+  --sr-foreground: #111827;
+  --sr-card: #ffffff;
+  --sr-card-foreground: #111827;
+  --sr-popover: #ffffff;
+  --sr-popover-foreground: #111827;
+  --sr-muted: #f3f4f6;
+  --sr-muted-foreground: #6b7280;
+  --sr-input: #ffffff;
+}

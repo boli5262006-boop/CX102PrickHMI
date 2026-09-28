@@ -1,0 +1,39 @@
+﻿=== Task 6 QA: UpdateTimer_Tick is read-only (no PLC writes) ===
+Timestamp: 09/27/2026 12:03:52
+
+--- UpdateTimer_Tick body (lines 121-152 of MainViewModel.cs) ---
+        private void UpdateTimer_Tick(object sender, EventArgs e)
+        {
+            var device = CommonMethods.plcDevice;
+            if (device == null || device.CurrentValue == null)
+            {
+                return;
+            }
+
+            var values = device.CurrentValue;
+
+            UpdateTextSnapshot(values, "RcpActIn", v => RecipeRing1 = v);
+            UpdateTextSnapshot(values, "RcpActOut", v => RecipeRing2 = v);
+            UpdateTextSnapshot(values, "ActPosIn", v => ActualRing1 = v);
+            UpdateTextSnapshot(values, "ActPosOut", v => ActualRing2 = v);
+
+            UpdateBoolSnapshot(values, "StsHomingDoneIn", v => StsHomingDoneIn = v);
+            UpdateBoolSnapshot(values, "StsHomingDoneOut", v => StsHomingDoneOut = v);
+            UpdateBoolSnapshot(values, "DriveInEnable", v => DriveInEnable = v);
+            UpdateBoolSnapshot(values, "DriveOutEnable", v => DriveOutEnable = v);
+            UpdateBoolSnapshot(values, "MainMachineStop", v => MainMachineStop = v);
+            UpdateBoolSnapshot(values, "TriggerMaintenance", v => TriggerMaintenance = v);
+
+            // 原点值输入框：对应轴键盘打开期间暂停刷新，避免编辑值被覆盖
+            if (KeypadTarget != KeypadTarget.In)
+            {
+                UpdateTextSnapshot(values, "HomingRefPosIn", v => HomingRefPosInText = v);
+            }
+            if (KeypadTarget != KeypadTarget.Out)
+            {
+                UpdateTextSnapshot(values, "HomingRefPosOut", v => HomingRefPosOutText = v);
+            }
+        }
+
+--- Select-String "WriteNode" within UpdateTimer_Tick body ---
+RESULT: NO occurrences of WriteNode/WriteNodeAsync in UpdateTimer_Tick. Pump is READ-ONLY. PASS

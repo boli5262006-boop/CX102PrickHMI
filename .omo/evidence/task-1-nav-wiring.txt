@@ -1,0 +1,24 @@
+﻿=== Task 1 QA: navigation wiring static check ===
+
+== 1. MainWindow.xaml - Pattern '搭接量监控' ==
+63: <Button Content="搭接量监控" Command="{Binding ShowOverlapCommand}" Style="{StaticResource OverlapNavButtonStyle}" />
+
+== 2. MainViewModel.cs - Pattern 'ShowOverlapCommand|IsOverlapSelected|HmiPage.Overlap' ==
+31: ShowOverlapCommand = new RelayCommand(() => SelectPage(HmiPage.Overlap, Overlap));
+51: OnPropertyChanged(nameof(IsOverlapSelected));
+59: public bool IsOverlapSelected { get { return SelectedPage == HmiPage.Overlap; } }
+68: public ICommand ShowOverlapCommand { get; }
+MatchCount = 4
+
+== 3. Controls.xaml - Pattern 'OverlapNavButtonStyle' ==
+47: <Style x:Key="OverlapNavButtonStyle" TargetType="Button" BasedOn="{StaticResource NavButtonStyle}">
+
+== 4. MainWindow.xaml - Pattern '刺辊监控' (expect exactly 1) ==
+62: <Button Content="刺辊监控" Command="{Binding ShowMonitorCommand}" Style="{StaticResource MonitorNavButtonStyle}" />
+Count = 1
+
+== 5. App.xaml - Pattern 'OverlapMonitor' ==
+15: <DataTemplate DataType="{x:Type vm:OverlapMonitorViewModel}">
+16: <views:OverlapMonitorView />
+
+RESULT: ALL PATTERNS HIT; '刺辊监控' appears exactly 1 time => PASS

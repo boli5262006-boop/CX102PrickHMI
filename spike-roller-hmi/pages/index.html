@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>刺辊监控</title>
+    <style id="theme-vars">
+:root {
+  /* Industrial clean dark palette */
+  --sr-bg: #0f1115;
+  --sr-surface: #1a1d23;
+  --sr-surface-2: #232730;
+  --sr-surface-3: #2d333c;
+
+  --sr-ink: #f0f1f3;
+  --sr-ink-2: #9ca3af;
+  --sr-ink-3: #6b7280;
+
+  --sr-line: #2d3139;
+  --sr-border: #3a3f49;
+
+  /* Single brand hue: industrial cyan */
+  --sr-brand: #0ea5e9;
+  --sr-brand-600: #0284c7;
+  --sr-brand-400: #38bdf8;
+  --sr-brand-ink: #ffffff;
+
+  /* Semantic state colors */
+  --sr-success: #22c55e;
+  --sr-warning: #f59e0b;
+  --sr-error: #ef4444;
+  --sr-info: #3b82f6;
+
+  /* Radius scale */
+  --sr-radius-sm: 4px;
+  --sr-radius-md: 8px;
+  --sr-radius-lg: 12px;
+  --sr-radius-full: 9999px;
+
+  /* Typography */
+  --sr-font-sans: "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --sr-font-mono: "JetBrains Mono", "SF Mono", "Menlo", monospace;
+
+  /* Spacing */
+  --sr-space-1: 4px;
+  --sr-space-2: 8px;
+  --sr-space-3: 12px;
+  --sr-space-4: 16px;
+  --sr-space-5: 24px;
+  --sr-space-6: 32px;
+
+  /* Shadows */
+  --sr-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --sr-shadow-2: 0 8px 24px -8px rgba(0, 0, 0, 0.35);
+
+  /* Semantic aliases for head contract */
+  --sr-background: var(--sr-bg);
+  --sr-foreground: var(--sr-ink);
+  --sr-card: var(--sr-surface);
+  --sr-card-foreground: var(--sr-ink);
+  --sr-popover: var(--sr-surface-2);
+  --sr-popover-foreground: var(--sr-ink);
+  --sr-primary: var(--sr-brand);
+  --sr-primary-foreground: var(--sr-brand-ink);
+  --sr-muted: var(--sr-surface-2);
+  --sr-muted-foreground: var(--sr-ink-2);
+  --sr-input: var(--sr-surface-2);
+  --sr-ring: var(--sr-brand);
+  --sr-radius-small: var(--sr-radius-sm);
+  --sr-radius-medium: var(--sr-radius-md);
+  --sr-radius-large: var(--sr-radius-lg);
+}
+
+.light {
+  --sr-background: #f8f9fa;
+  --sr-foreground: #111827;
+  --sr-card: #ffffff;
+  --sr-card-foreground: #111827;
+  --sr-popover: #ffffff;
+  --sr-popover-foreground: #111827;
+  --sr-muted: #f3f4f6;
+  --sr-muted-foreground: #6b7280;
+  --sr-input: #ffffff;
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--sr-background);
+    --color-foreground: var(--sr-foreground);
+    --color-card: var(--sr-card);
+    --color-card-foreground: var(--sr-card-foreground);
+    --color-popover: var(--sr-popover);
+    --color-popover-foreground: var(--sr-popover-foreground);
+    --color-primary: var(--sr-primary);
+    --color-primary-foreground: var(--sr-primary-foreground);
+    --color-muted: var(--sr-muted);
+    --color-muted-foreground: var(--sr-muted-foreground);
+    --color-border: var(--sr-border);
+    --color-input: var(--sr-input);
+    --color-ring: var(--sr-ring);
+    --radius-sm: var(--sr-radius-sm);
+    --radius-md: var(--sr-radius-md);
+    --radius-lg: var(--sr-radius-lg);
+  }
+  @layer base {
+    body { background: var(--sr-background); color: var(--sr-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--sr-background); }
+      .text-background { color: var(--sr-background); }
+      .border-background { border-color: var(--sr-background); }
+      .ring-background { --tw-ring-color: var(--sr-background); }
+      .bg-foreground { background-color: var(--sr-foreground); }
+      .text-foreground { color: var(--sr-foreground); }
+      .border-foreground { border-color: var(--sr-foreground); }
+      .ring-foreground { --tw-ring-color: var(--sr-foreground); }
+      .bg-card { background-color: var(--sr-card); }
+      .text-card { color: var(--sr-card); }
+      .border-card { border-color: var(--sr-card); }
+      .ring-card { --tw-ring-color: var(--sr-card); }
+      .bg-card-foreground { background-color: var(--sr-card-foreground); }
+      .text-card-foreground { color: var(--sr-card-foreground); }
+      .border-card-foreground { border-color: var(--sr-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--sr-card-foreground); }
+      .bg-popover { background-color: var(--sr-popover); }
+      .text-popover { color: var(--sr-popover); }
+      .border-popover { border-color: var(--sr-popover); }
+      .ring-popover { --tw-ring-color: var(--sr-popover); }
+      .bg-popover-foreground { background-color: var(--sr-popover-foreground); }
+      .text-popover-foreground { color: var(--sr-popover-foreground); }
+      .border-popover-foreground { border-color: var(--sr-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--sr-popover-foreground); }
+      .bg-primary { background-color: var(--sr-primary); }
+      .text-primary { color: var(--sr-primary); }
+      .border-primary { border-color: var(--sr-primary); }
+      .ring-primary { --tw-ring-color: var(--sr-primary); }
+      .bg-primary-foreground { background-color: var(--sr-primary-foreground); }
+      .text-primary-foreground { color: var(--sr-primary-foreground); }
+      .border-primary-foreground { border-color: var(--sr-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--sr-primary-foreground); }
+      .bg-muted { background-color: var(--sr-muted); }
+      .text-muted { color: var(--sr-muted); }
+      .border-muted { border-color: var(--sr-muted); }
+      .ring-muted { --tw-ring-color: var(--sr-muted); }
+      .bg-muted-foreground { background-color: var(--sr-muted-foreground); }
+      .text-muted-foreground { color: var(--sr-muted-foreground); }
+      .border-muted-foreground { border-color: var(--sr-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--sr-muted-foreground); }
+      .bg-border { background-color: var(--sr-border); }
+      .text-border { color: var(--sr-border); }
+      .border-border { border-color: var(--sr-border); }
+      .ring-border { --tw-ring-color: var(--sr-border); }
+      .bg-input { background-color: var(--sr-input); }
+      .text-input { color: var(--sr-input); }
+      .border-input { border-color: var(--sr-input); }
+      .ring-input { --tw-ring-color: var(--sr-input); }
+      .bg-ring { background-color: var(--sr-ring); }
+      .text-ring { color: var(--sr-ring); }
+      .border-ring { border-color: var(--sr-ring); }
+      .ring-ring { --tw-ring-color: var(--sr-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+      .device-img-wrap {
+        position: relative;
+        border-radius: var(--sr-radius-md);
+        overflow: hidden;
+        border: 1px solid var(--sr-line);
+        background: var(--sr-surface-2);
+      }
+      .device-img {
+        display: block;
+        width: 100%;
+        height: 180px;
+        object-fit: contain;
+        object-position: center;
+        filter: brightness(0.9) contrast(1.02);
+      }
+      .device-img-wrap::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to bottom, rgba(15,17,21,0) 80%, rgba(26,29,35,0.15) 100%);
+        pointer-events: none;
+      }
+      .sr-transition {
+        transition: color 120ms ease, background-color 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+      }
+      .sr-fill-layout {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        min-height: 0;
+      }
+      .sr-fill-grid {
+        display: grid;
+        align-items: stretch;
+        flex: 1 1 auto;
+        min-height: 0;
+      }
+      .sr-fill-col {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+      }
+      .sr-stretch-card {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      .process-flow {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+      .process-step {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        position: relative;
+        padding-bottom: 12px;
+      }
+      .process-step:last-child {
+        padding-bottom: 0;
+      }
+      .process-step::before {
+        content: "";
+        position: absolute;
+        left: 11px;
+        top: 22px;
+        bottom: 0;
+        width: 2px;
+        background: var(--sr-line);
+      }
+      .process-step:last-child::before {
+        display: none;
+      }
+      .process-step.completed::before {
+        background: var(--sr-success);
+      }
+      .process-step.error::before {
+        background: var(--sr-error);
+      }
+      .step-indicator {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 12px;
+        font-weight: 600;
+        border: 2px solid transparent;
+      }
+      .step-indicator.pending {
+        background: var(--sr-surface-2);
+        border-color: var(--sr-border);
+        color: var(--sr-ink-3);
+      }
+      .step-indicator.completed {
+        background: var(--sr-success);
+        border-color: var(--sr-success);
+        color: #ffffff;
+      }
+      .step-indicator.error {
+        background: var(--sr-error);
+        border-color: var(--sr-error);
+        color: #ffffff;
+      }
+      .step-content {
+        flex: 1;
+        padding-top: 2px;
+      }
+      .step-title {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--sr-ink);
+      }
+      .step-status {
+        font-size: 11px;
+        color: var(--sr-ink-3);
+        margin-top: 1px;
+      }
+      .process-step.completed .step-title { color: var(--sr-success); }
+      .process-step.error .step-title { color: var(--sr-error); }
+      .process-flow-scroll {
+        overflow-y: auto;
+        flex: 1 1 auto;
+        min-height: 0;
+        padding-right: 4px;
+      }
+      .process-flow-scroll::-webkit-scrollbar { width: 4px; }
+      .process-flow-scroll::-webkit-scrollbar-track { background: transparent; }
+      .process-flow-scroll::-webkit-scrollbar-thumb { background: var(--sr-border); border-radius: 2px; }
+      .process-flow-horizontal {
+        display: flex;
+        align-items: stretch;
+        gap: 4px;
+        min-width: 0;
+      }
+      .process-step-horizontal {
+        flex: 1 1 0;
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        position: relative;
+      }
+      .process-step-horizontal:not(:last-child)::after {
+        content: "";
+        flex: 1 1 0;
+        min-width: 8px;
+        height: 2px;
+        margin: 0 4px;
+        background: var(--sr-line);
+        border-radius: 1px;
+      }
+      .process-step-horizontal.completed:not(:last-child)::after { background: var(--sr-success); }
+      .process-step-horizontal.error:not(:last-child)::after { background: var(--sr-error); }
+      .step-indicator-horizontal {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 10px;
+        font-weight: 700;
+        border: 2px solid transparent;
+      }
+      .step-indicator-horizontal.pending { background: var(--sr-surface-2); border-color: var(--sr-border); color: var(--sr-ink-3); }
+      .step-indicator-horizontal.completed { background: var(--sr-success); border-color: var(--sr-success); color: #ffffff; }
+      .step-indicator-horizontal.error { background: var(--sr-error); border-color: var(--sr-error); color: #ffffff; }
+      .step-content-horizontal {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        line-height: 1.25;
+      }
+      .step-title-horizontal {
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--sr-ink);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .step-status-horizontal {
+        font-size: 10px;
+        color: var(--sr-ink-3);
+      }
+      .process-step-horizontal.completed .step-title-horizontal { color: var(--sr-success); }
+      .process-step-horizontal.error .step-title-horizontal { color: var(--sr-error); }
+      .process-flow-panel {
+        border-radius: var(--sr-radius-md);
+        border: 1px solid var(--sr-line);
+        background: var(--sr-surface);
+        padding: 10px 14px;
+        display: flex;
+        align-items: center;
+        min-width: 0;
+        flex: 1 1 auto;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .sr-transition {
+          transition: none;
+        }
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased" style="background: var(--sr-bg); color: var(--sr-ink);">
+    <div class="min-h-screen flex flex-col">
+      <!-- HEADER -->
+      <header class="border-b px-6 py-4 flex items-center justify-between" style="background: var(--sr-surface); border-color: var(--sr-line);">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded flex items-center justify-center" style="background: var(--sr-brand); color: var(--sr-brand-ink);">
+            <i data-lucide="cog" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h1 class="text-lg font-semibold tracking-tight" style="color: var(--sr-ink);">刺辊自动化监控系统</h1>
+            <p class="text-xs" style="color: var(--sr-ink-3);">Spike Roller Automation HMI</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-4 text-sm" style="color: var(--sr-ink-2);">
+          <span class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full" style="background: var(--sr-success);"></span>
+            运行中
+          </span>
+          <span id="system-time">--:--:--</span>
+        </div>
+      </header>
+
+      <!-- TAB NAVIGATION + PROCESS FLOW -->
+      <nav class="px-6 pt-4" style="background: var(--sr-bg);">
+        <div class="flex items-start gap-4">
+          <div class="flex gap-1 p-1 rounded-lg w-fit flex-shrink-0" style="background: var(--sr-surface); border: 1px solid var(--sr-line);">
+            <a href="./index.html" data-nav-key="monitor" data-active="true" class="px-5 py-2 text-sm font-medium rounded-md sr-transition" style="background: var(--sr-brand); color: var(--sr-brand-ink);">
+              刺辊监控
+            </a>
+            <a href="./alarms.html" data-nav-key="alarms" data-active="false" data-dom-id="nav-alarms" class="px-5 py-2 text-sm font-medium rounded-md sr-transition" style="color: var(--sr-ink-2);">
+              报警记录
+            </a>
+            <a href="./history-alarms.html" data-nav-key="history-alarms" data-active="false" data-dom-id="nav-history-alarms" class="px-5 py-2 text-sm font-medium rounded-md sr-transition" style="color: var(--sr-ink-2);">
+              历史报警
+            </a>
+          </div>
+          <div class="process-flow-panel sr-transition">
+            <div class="process-flow-horizontal w-full" id="process-flow">
+              <div class="process-step-horizontal completed" data-step="1">
+                <div class="step-indicator-horizontal completed">1</div>
+                <div class="step-content-horizontal">
+                  <div class="step-title-horizontal" title="主线停机">主线停机</div>
+                  <div class="step-status-horizontal">已完成</div>
+                </div>
+              </div>
+              <div class="process-step-horizontal completed" data-step="2">
+                <div class="step-indicator-horizontal completed">2</div>
+                <div class="step-content-horizontal">
+                  <div class="step-title-horizontal" title="配方加载">配方加载</div>
+                  <div class="step-status-horizontal">已完成</div>
+                </div>
+              </div>
+              <div class="process-step-horizontal completed" data-step="3">
+                <div class="step-indicator-horizontal completed">3</div>
+                <div class="step-content-horizontal">
+                  <div class="step-title-horizontal" title="离合松开">离合松开</div>
+                  <div class="step-status-horizontal">已完成</div>
+                </div>
+              </div>
+              <div class="process-step-horizontal error" data-step="4">
+                <div class="step-indicator-horizontal error">4</div>
+                <div class="step-content-horizontal">
+                  <div class="step-title-horizontal" title="槽辊打开">槽辊打开</div>
+                  <div class="step-status-horizontal">异常</div>
+                </div>
+              </div>
+              <div class="process-step-horizontal pending" data-step="5">
+                <div class="step-indicator-horizontal pending">5</div>
+                <div class="step-content-horizontal">
+                  <div class="step-title-horizontal" title="夹紧到位">夹紧到位</div>
+                  <div class="step-status-horizontal">未开始</div>
+                </div>
+              </div>
+              <div class="process-step-horizontal pending" data-step="6">
+                <div class="step-indicator-horizontal pending">6</div>
+                <div class="step-content-horizontal">
+                  <div class="step-title-horizontal" title="到达配方位置">到达配方位置</div>
+                  <div class="step-status-horizontal">未开始</div>
+                </div>
+              </div>
+              <div class="process-step-horizontal pending" data-step="7">
+                <div class="step-indicator-horizontal pending">7</div>
+                <div class="step-content-horizontal">
+                  <div class="step-title-horizontal" title="槽辊收回">槽辊收回</div>
+                  <div class="step-status-horizontal">未开始</div>
+                </div>
+              </div>
+              <div class="process-step-horizontal pending" data-step="8">
+                <div class="step-indicator-horizontal pending">8</div>
+                <div class="step-content-horizontal">
+                  <div class="step-title-horizontal" title="离合夹紧">离合夹紧</div>
+                  <div class="step-status-horizontal">未开始</div>
+                </div>
+              </div>
+              <div class="process-step-horizontal pending" data-step="9">
+                <div class="step-indicator-horizontal pending">9</div>
+                <div class="step-content-horizontal">
+                  <div class="step-title-horizontal" title="完成">完成</div>
+                  <div class="step-status-horizontal">未开始</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <!-- PAGE TITLE SLOT -->
+      <div class="px-6 pt-5 pb-2" style="background: var(--sr-bg);">
+        <h2 id="page-title" class="text-xl font-semibold" style="color: var(--sr-ink);">刺辊监控</h2>
+      </div>
+
+      <!-- MAIN CONTENT SLOT -->
+      <main id="main-content" class="sr-fill-layout px-6 pb-6" style="background: var(--sr-bg);">
+        <div class="sr-fill-grid grid-cols-12 gap-6">
+          <!-- LEFT COLUMN -->
+          <div class="col-span-12 lg:col-span-8 sr-fill-col gap-6">
+            <!-- KPI ROW -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <!-- RECIPE CARD -->
+              <div class="rounded-lg p-5 border sr-transition" style="background: var(--sr-surface); border-color: var(--sr-border);">
+                <div class="flex items-center gap-2 mb-4">
+                  <i data-lucide="file-sliders" class="w-4 h-4" style="color: var(--sr-ink-2);"></i>
+                  <h3 class="text-sm font-semibold" style="color: var(--sr-ink);">当前配方值</h3>
+                </div>
+                <div class="space-y-4">
+                  <div>
+                    <p class="text-xs mb-1" style="color: var(--sr-ink-3);">刺针环1</p>
+                    <p class="text-3xl font-semibold tracking-tight" style="color: var(--sr-ink); font-family: var(--sr-font-mono);">125.00 <span class="text-base font-normal" style="color: var(--sr-ink-2);">mm</span></p>
+                  </div>
+                  <div class="pt-3 border-t" style="border-color: var(--sr-line);">
+                    <p class="text-xs mb-1" style="color: var(--sr-ink-3);">刺针环2</p>
+                    <p class="text-3xl font-semibold tracking-tight" style="color: var(--sr-ink); font-family: var(--sr-font-mono);">198.50 <span class="text-base font-normal" style="color: var(--sr-ink-2);">mm</span></p>
+                  </div>
+                </div>
+              </div>
+              <!-- ACTUAL CARD -->
+              <div class="rounded-lg p-5 border sr-transition" style="background: var(--sr-surface); border-color: var(--sr-border);">
+                <div class="flex items-center gap-2 mb-4">
+                  <i data-lucide="activity" class="w-4 h-4" style="color: var(--sr-ink-2);"></i>
+                  <h3 class="text-sm font-semibold" style="color: var(--sr-ink);">当前实际值</h3>
+                </div>
+                <div class="space-y-4">
+                  <div>
+                    <p class="text-xs mb-1" style="color: var(--sr-ink-3);">刺针环1</p>
+                    <p class="text-3xl font-semibold tracking-tight" style="color: var(--sr-brand); font-family: var(--sr-font-mono);">124.98 <span class="text-base font-normal" style="color: var(--sr-ink-2);">mm</span></p>
+                  </div>
+                  <div class="pt-3 border-t" style="border-color: var(--sr-line);">
+                    <p class="text-xs mb-1" style="color: var(--sr-ink-3);">刺针环2</p>
+                    <p class="text-3xl font-semibold tracking-tight" style="color: var(--sr-brand); font-family: var(--sr-font-mono);">198.52 <span class="text-base font-normal" style="color: var(--sr-ink-2);">mm</span></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- CONTROL PANEL CARD -->
+            <div class="rounded-lg p-5 border sr-transition sr-stretch-card" style="background: var(--sr-surface); border-color: var(--sr-border);">
+              <div class="flex items-center gap-2 mb-5">
+                <i data-lucide="sliders-horizontal" class="w-4 h-4" style="color: var(--sr-ink-2);"></i>
+                <h3 class="text-sm font-semibold" style="color: var(--sr-ink);">伺服控制</h3>
+              </div>
+
+              <!-- INPUT ROW -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+                <div>
+                  <label class="block text-xs mb-1" style="color: var(--sr-ink-3);">伺服1 当前实际值</label>
+                  <input id="input-servo-1" type="text" readonly value="0.00" class="w-full rounded-md px-3 py-2 text-sm border outline-none sr-transition focus:ring-2" style="background: var(--sr-surface-2); color: var(--sr-ink); border-color: var(--sr-border); font-family: var(--sr-font-mono); --tw-ring-color: var(--sr-brand);">
+                </div>
+                <div>
+                  <label class="block text-xs mb-1" style="color: var(--sr-ink-3);">伺服2 当前实际值</label>
+                  <input id="input-servo-2" type="text" readonly value="0.00" class="w-full rounded-md px-3 py-2 text-sm border outline-none sr-transition focus:ring-2" style="background: var(--sr-surface-2); color: var(--sr-ink); border-color: var(--sr-border); font-family: var(--sr-font-mono); --tw-ring-color: var(--sr-brand);">
+                </div>
+              </div>
+
+              <!-- BUTTON ROW -->
+              <div class="flex flex-wrap gap-3 mb-5">
+                <button id="btn-calibrate" type="button" class="px-6 py-2.5 rounded-md text-sm font-medium border sr-transition" style="background: var(--sr-brand); color: var(--sr-brand-ink); border-color: var(--sr-brand);">
+                  校准
+                </button>
+                <button id="btn-settings" type="button" class="px-6 py-2.5 rounded-md text-sm font-medium border sr-transition" style="background: transparent; color: var(--sr-ink); border-color: var(--sr-border);">
+                  设置
+                </button>
+                <button id="btn-maintenance" type="button" class="px-6 py-2.5 rounded-md text-sm font-medium border sr-transition" style="background: transparent; color: var(--sr-ink); border-color: var(--sr-border);">
+                  维修模式
+                </button>
+              </div>
+
+              <!-- HOMING STATUS ROWS -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t" style="border-color: var(--sr-line);">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm" style="color: var(--sr-ink);">伺服1 回原</span>
+                  <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full" style="background: var(--sr-success);"></span>
+                    <span class="text-sm" style="color: var(--sr-ink-2);">已回原</span>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-sm" style="color: var(--sr-ink);">伺服2 回原</span>
+                  <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full" style="background: var(--sr-ink-3);"></span>
+                    <span class="text-sm" style="color: var(--sr-ink-2);">未回原</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT COLUMN -->
+          <div class="col-span-12 lg:col-span-4 sr-fill-col">
+            <div class="rounded-lg p-5 border sr-transition sr-stretch-card" style="background: var(--sr-surface); border-color: var(--sr-border);">
+              <div class="flex items-center gap-2 mb-4">
+                <i data-lucide="gauge" class="w-4 h-4" style="color: var(--sr-ink-2);"></i>
+                <h3 class="text-sm font-semibold" style="color: var(--sr-ink);">设备状态</h3>
+              </div>
+              <div class="device-img-wrap mb-4">
+                <img src="../assets/spike-roller-device.png" alt="刺辊设备结构示意图" class="device-img" />
+              </div>
+              <div class="space-y-3">
+                <div class="flex items-center justify-between py-2 border-b" style="border-color: var(--sr-line);">
+                  <span class="text-sm" style="color: var(--sr-ink);">系统运行中</span>
+                  <span class="w-3 h-3 rounded-full" style="background: var(--sr-success);"></span>
+                </div>
+                <div class="flex items-center justify-between py-2 border-b" style="border-color: var(--sr-line);">
+                  <span class="text-sm" style="color: var(--sr-ink);">伺服1 已使能</span>
+                  <span class="w-3 h-3 rounded-full" style="background: var(--sr-success);"></span>
+                </div>
+                <div class="flex items-center justify-between py-2 border-b" style="border-color: var(--sr-line);">
+                  <span class="text-sm" style="color: var(--sr-ink);">伺服2 未使能</span>
+                  <span class="w-3 h-3 rounded-full" style="background: var(--sr-ink-3);"></span>
+                </div>
+                <div class="flex items-center justify-between py-2">
+                  <span class="text-sm" style="color: var(--sr-ink);">报警 0 条</span>
+                  <span class="w-3 h-3 rounded-full" style="background: var(--sr-brand);"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- FOOTER -->
+      <footer class="px-6 py-3 text-xs flex items-center justify-between border-t" style="background: var(--sr-surface); border-color: var(--sr-line); color: var(--sr-ink-3);">
+        <span>设备在线 · PLC 连接正常</span>
+        <span>v1.0.0</span>
+      </footer>
+    </div>
+    <script>
+      lucide.createIcons();
+      function updateTime() {
+        const now = new Date();
+        document.getElementById('system-time').textContent = now.toLocaleTimeString('zh-CN', { hour12: false });
+      }
+      updateTime();
+      setInterval(updateTime, 1000);
+    </script>
+</body>
+</html>

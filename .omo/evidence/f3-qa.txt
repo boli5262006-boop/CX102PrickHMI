@@ -1,0 +1,22 @@
+F3 Real QA — F:\CX102PrickHMI (static + build, read-only)
+Run: dotnet build CX102PrickHMI.sln -c Debug → Build succeeded, 0 Warning(s), 0 Error(s)
+
+Scenarios [9/9 pass] | VERDICT: APPROVE
+
+S1 PASS — Binding completeness: all MonitorView.xaml paths exist on MainViewModel. RecipeRing1/2 MainViewModel.cs:232/239; ActualRing1/2 :246/253; HomingRefPosIn/OutText :260/267; HomingRefPosIn/OutInvalid :331/338; OpenKeypadIn/OutCommand :424/425; HoldHomingIn/Out + HoldSetupCommand :426-428; TriggerMaintenance :310; CalibrationMessage :345; StsHomingDoneIn/Out :274/281; IsAlarmActive :352; MainMachineStop :303; DriveInEnable/OutEnable :288/295. XAML usage: MonitorView.xaml:56,75,103,121,153,157,167,178,182,192,200,205,209,223,236,256,269,288,301,343,395,411,431,446,467,482. NumericKeypadOverlay.xaml paths: KeypadVisible :372, KeypadTargetText :377, KeypadEditValue :394, KeypadErrorText :401, KeypadHasError :413, KeypadDigitCommand :419, KeypadBackspaceCommand :420, KeypadClearCommand :421, ConfirmKeypadCommand :422, CancelKeypadCommand :423 (XAML :76,90,100,107,111,126-140,145,151,155). Missing: NONE. Runtime DataContext = MainViewModel (MainViewModel.cs:72); MonitorView.xaml:11 d:DataContext is design-time only (mc:Ignorable).
+
+S2 PASS — Mock-data scrub: 0 hits for '125.00','198.50','124.98','198.52','模拟数据','2026-07-2','伺服1 回原超时' in MonitorView.xaml and MainViewModel.cs (grep). Only MainViewModel.cs:52-59 commented SQLite Test insert (allowed). Defaults are "0.00" (:231,238,245,252,259,266,316,317).
+
+S3 PASS — Poll enabled: MainViewModel.cs:759 `private async Task GetOPCUAValue` uncommented; Task.Run(GetOPCUAValue...) inside AttemptConnectionAndInitialData :744-747. Body matches plan: GroupList loop :765, CurrentValue update/add :784-791, opcua.Update :794, NLog catch :798-801, Task.Delay(250, token) :803. No deviations.
+
+S4 PASS — Write paths: WriteNodeAsync exactly 2 hits — float origin write MainViewModel.cs:529 (ConfirmKeypadAsync), bool command write :570 (SendMomentaryAsync). UpdateTimer_Tick (:121-152) contains zero writes — read-only snapshots only (:131-151).
+
+S5 PASS — Keypad flow: ConfirmKeypadAsync MainViewModel.cs:499; parse fail → "请输入有效数字" :506 + SetKeypadInvalid(true) :507 + return (keypad stays open); value<=0 → "原点值必须大于 0" :513 + invalid flag :514 + return (stays open); success → write :529, CloseKeypad() :548. CancelKeypad :473-478 → CloseKeypad + HomingRefPosInInvalid=false :476 + HomingRefPosOutInvalid=false :477. KeypadVisible derives from KeypadTarget (:372-375). Non-blocking note: tag-address-not-found also closes keypad (:524-526) — outside stated criteria.
+
+S6 PASS — Momentary wiring: MonitorView.xaml:200 b:MomentaryButtonBehavior.Command=HoldHomingInCommand, :205 HoldHomingOutCommand, :209 HoldSetupCommand; xmlns:b :9; no Button.Command double-bind. Behavior: MomentaryButtonBehavior.cs:90-106 PreviewMouseLeftButtonDown → Execute(true) once (IsPressActive :104); Up :108-111 and LostMouseCapture :113-116 → Release() :122-137, guarded by IsPressActive check+reset :125-130 → Execute(false) exactly once per press.
+
+S7 PASS — Lamp logic (XAML triggers on VM properties): MainMachineStop False→"主机运行中"/Success default, True→"主机已停机"/Ink3 — MonitorView.xaml:393-397 (text), 409-413 (fill). StsHomingDoneIn 未回原/已回原 :267-271 + Ink3/Success :256-258. StsHomingDoneOut :299-303 + :286-289. DriveInEnable 未使能/已使能 :429-433 + Ink3/Success :444-447. DriveOutEnable :465-469 + :480-483. TriggerMaintenance 未激活/Ink3 → 激活/Success :220-226.
+
+S8 PASS — csproj registration: CX102PrickHMI.csproj:156 Behaviors\MomentaryButtonBehavior.cs; :165 Utilities\PlcTagLookup.cs; :201-204 Page Views\NumericKeypadOverlay.xaml; :218-221 Compile Views\NumericKeypadOverlay.xaml.cs (DependentUpon :219).
+
+S9 PASS — dotnet build F:\CX102PrickHMI\CX102PrickHMI.sln -c Debug --nologo → Build succeeded, 0 Warning(s), 0 Error(s), output CX102PrickHMI\bin\Debug\CX102PrickHMI.exe.

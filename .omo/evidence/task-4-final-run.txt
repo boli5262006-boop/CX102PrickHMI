@@ -1,0 +1,71 @@
+﻿=== Task 4: Build + Runtime Verification (overlap-monitor-page plan) ===
+Generated: 2026-09-07 00:23:24
+Machine: LI | Workdir: F:\CX102PrickHMI
+
+--- Step 1: dotnet build CX102PrickHMI.sln --no-restore ---
+SDKs installed: 9.0.317 [C:\Program Files\dotnet\sdk] ; 10.0.101 [C:\Program Files\dotnet\sdk] ; 10.0.400 [C:\Program Files\dotnet\sdk]
+Result: BUILD FAILED
+ExitCode: non-zero (MC1000 markup-compile error, no app produced)
+Build output:
+C:\Program Files\dotnet\sdk\10.0.400\Sdks\Microsoft.NET.Sdk.WindowsDesktop\targets\Microsoft.WinFX.targets(211,9): error MC1000: Unknown build error, 'Could not find assembly 'System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a'. Either explicitly load this assembly using a method such as LoadFromAssemblyPath() or use a MetadataAssemblyResolver that returns a valid assembly.'  [F:\CX102PrickHMI\CX102PrickHMI\CX102PrickHMI.csproj]
+
+Build FAILED.
+
+C:\Program Files\dotnet\sdk\10.0.400\Sdks\Microsoft.NET.Sdk.WindowsDesktop\targets\Microsoft.WinFX.targets(211,9): error MC1000: Unknown build error, 'Could not find assembly 'System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a'. Either explicitly load this assembly using a method such as LoadFromAssemblyPath() or use a MetadataAssemblyResolver that returns a valid assembly.'  [F:\CX102PrickHMI\CX102PrickHMI\CX102PrickHMI.csproj]
+    0 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:00.55
+
+
+--- Step 2: exe launch ---
+NOT EXECUTED: build failed; exe at F:\CX102PrickHMI\CX102PrickHMI\bin\Debug\CX102PrickHMI.exe is stale (LastWriteTime 2026-08-16 11:16:23, predates Tasks 1-3, does not contain OverlapMonitorView). Launching stale binary would produce misleading evidence; task instructions require BLOCKED report on build failure.
+
+--- Diagnostics (read-only, no code modified) ---
+Error: MC1000 Unknown build error: Could not find assembly System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a during WinFX markup compilation (Microsoft.WinFX.targets(211,9)).
+Context: SDK 10.0.400 selected (no global.json; highest SDK wins). System.Drawing reference DLL exists in the v4.7.2 targeting pack at C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Drawing.dll; the .NET 10 SDK markup compiler fails to resolve it.
+Root cause hypothesis: environment/toolchain issue (.NET SDK 10 markup compiler vs .NET Framework reference assemblies), NOT caused by Task 1-3 code changes; Tasks 1-3 skipped builds by design so this is the first build touching the new XAML.
+Candidate fix (for user/orchestrator decision, NOT applied): pin global.json to SDK 9.0.317 (or 10.0.101), or add explicit System.Drawing reference fallback; no files were edited per task constraints.
+
+--- Summary ---
+Status: BLOCKED
+Build: FAILED (1 Error / 0 Warning, MC1000)
+Process run: NOT EXECUTED (no fresh exe; stale exe left untouched and no process started, nothing to stop)
+Evidence file: F:\CX102PrickHMI\.omo\evidence\task-4-final-run.txt
+
+=== Task 4 APPENDIX: authorized fix + successful build + runtime verification ===
+Generated: 2026-09-07 00:27:12
+
+--- Fix 1: global.json (SDK pin) ---
+Created F:\CX102PrickHMI\global.json: { "sdk": { "version": "10.0.101", "rollForward": "latestPatch", "allowPrerelease": false } }
+dotnet --version -> 10.0.101 (pin effective)
+Build retry on 10.0.101: STILL FAILED with identical MC1000 System.Drawing error -> SDK pin alone insufficient.
+
+--- Fix 2: csproj System.Drawing reference (DECISIVE) ---
+Added <Reference Include="System.Drawing" /> to CX102PrickHMI.csproj framework-reference ItemGroup, line 68 (between System.Numerics and System.Numerics.Vectors, matching neighbor formatting).
+No other source/XAML/csproj lines touched. XAML/C# files untouched.
+
+--- Build result (after both fixes) ---
+Command: dotnet build "CX102PrickHMI.sln" --no-restore
+Output:
+  CX102PrickHMI -> F:\CX102PrickHMI\CX102PrickHMI\bin\Debug\CX102PrickHMI.exe
+  Build succeeded.
+      0 Warning(s)
+      0 Error(s)
+  Time Elapsed 00:00:02.44
+ExitCode: 0
+
+--- Runtime verification ---
+exe LastWriteTime: 2026-09-07 00:26:17 (fresh from this build; verified before launch)
+Launch: Start-Process with -RedirectStandardOutput/-RedirectStandardError
+PID: 73088
+HasExited at +7.2s: False (process alive)
+Stop-Process: applied, confirmed gone (0 CX102PrickHMI processes after)
+stderr: 0 bytes (empty), 0 hits for Unhandled Exception / XamlParseException / Exception
+stdout: empty
+
+--- Summary ---
+Status: DONE
+Fix chain: global.json SDK pin (necessary but insufficient) + csproj System.Drawing reference (decisive).
+Build: succeeded 0 Error / 0 Warning
+Process: alive >=7s, killed cleanly, stderr clean

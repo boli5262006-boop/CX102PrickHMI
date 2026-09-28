@@ -1,0 +1,43 @@
+﻿=== Task 2 QA: OverlapMonitorView (static page) ===
+Generated: 2026-09-07 00:16:02
+
+XML WELL-FORMED: PASS (root: UserControl)
+{Binding} count: 0 (expected 0)
+x:Name count: 1 (expected 1: ControlTemplate target Bd)
+
+--- Value fidelity hits (
+13
+, expected 12) ---
+Line 148: Text="报警 | ALARM: P-02 中段搭接量超出标准范围 (4±2mm)" />
+Line 286: Data="M 45 140 A 75 75 0 0 1 101.35 47.36"
+Line 332: Text="4.2">
+Line 379: <TextBlock Canvas.Left="169" Canvas.Top="20" Width="62" FontFamily="Consolas" FontSize="10" Foreground="{StaticResource Success}" TextAlignment="Center" Text="4.2mm" />
+Line 396: <TextBlock FontSize="10" FontWeight="Bold" Foreground="{StaticResource Ink2}" Text="4±2mm" />
+Line 616: Text="7.3">
+Line 663: <TextBlock Canvas.Left="155" Canvas.Top="20" Width="88" FontFamily="Consolas" FontSize="10" Foreground="{StaticResource Error}" TextAlignment="Center" Text="7.3mm" />
+Line 680: <TextBlock FontSize="10" FontWeight="Bold" Foreground="{StaticResource Ink2}" Text="4±2mm" />
+Line 688: Text="+3.3 超限" />
+Line 865: Text="3.8">
+Line 912: <TextBlock Canvas.Left="176" Canvas.Top="20" Width="48" FontFamily="Consolas" FontSize="10" Foreground="{StaticResource Success}" TextAlignment="Center" Text="3.8mm" />
+Line 929: <TextBlock FontSize="10" FontWeight="Bold" Foreground="{StaticResource Ink2}" Text="4±2mm" />
+Line 971: <TextBlock HorizontalAlignment="Center" FontSize="11" Foreground="{StaticResource Ink3}" Text="SYS-ID: MLO-2026-A | 采样频率: 10Hz | 标准范围: 4±2mm | 传感器: 激光测距 x3" />
+
+--- Structural fidelity ---
+M 45 140 A 75 75 0 1 1 195 140 x3
+101.35 47.36 x1
+169.6 63.74 x1
+92.4 50.27 x1
+Angle="-14.4" x1
+Angle="41.4" x1
+Angle="-21.6" x1
+RESET ALARM x1
+MATERIAL OVERLAP MONITOR x1
+SYS-ID: MLO-2026-A x1
+PageGridBrush x2
+ResetAlarmButtonStyle x2
+PositionBadgeAlertStyle x2
+StatusAlertStyle x2
+EventTrigger RoutedEvent="Border.Loaded" x2
+RepeatBehavior="Forever" x2
+BlurRadius="50" x1
+StrokeDashArray="3 2" x3

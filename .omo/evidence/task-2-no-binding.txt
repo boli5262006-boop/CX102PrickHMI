@@ -1,0 +1,6 @@
+﻿=== Task 2 QA: zero-binding check ===
+File: F:\CX102PrickHMI\CX102PrickHMI\Views\OverlapMonitorView.xaml
+Pattern: \{Binding
+Count: 0
+Expected: 0
+Result: PASS

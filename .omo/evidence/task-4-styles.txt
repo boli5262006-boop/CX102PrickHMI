@@ -1,0 +1,54 @@
+﻿=== Task 4 QA: Styles added to Controls.xaml ===
+Date: 2026-09-27 11:43:04
+
+--- Select-String pattern: x:Key="HoldButtonStyle" ---
+Controls.xaml:140: <Style x:Key="HoldButtonStyle" TargetType="Button" BasedOn="{StaticResource NavButtonStyle}">
+
+--- Select-String pattern: x:Key="ReadonlyValueBoxStyle" ---
+Controls.xaml:159: <Style x:Key="ReadonlyValueBoxStyle" TargetType="TextBox" BasedOn="{StaticResource InputStyle}">
+
+--- Select-String pattern: IsPressed ---
+Controls.xaml:100: <Trigger Property="IsPressed" Value="True">
+Controls.xaml:152: <Trigger Property="IsPressed" Value="True">
+
+--- Select-String pattern: IsReadOnly ---
+Controls.xaml:160: <Setter Property="IsReadOnly" Value="True" />
+Controls.xaml:162: <Setter Property="IsReadOnlyCaretVisible" Value="False" />
+
+--- HoldButtonStyle block (lines 140..158) ---
+    <Style x:Key="HoldButtonStyle" TargetType="Button" BasedOn="{StaticResource NavButtonStyle}">
+        <Setter Property="Background" Value="{DynamicResource Surface2}" />
+        <Setter Property="Foreground" Value="{DynamicResource Ink}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Border}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="24,12" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="BorderBrush" Value="{DynamicResource PrimaryLight}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Primary}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Primary}" />
+                <Setter Property="Foreground" Value="White" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+HoldButtonStyle block contains 'IsMonitorSelected': NO - PASS
+
+--- Build tail: dotnet build CX102PrickHMI.sln -c Debug --nologo ---
+    Determining projects to restore...
+    Nothing to do. None of the projects specified contain packages to restore.
+    RID is: 
+    Platform is: x64
+    CX102PrickHMI -> F:\CX102PrickHMI\CX102PrickHMI\bin\Debug\CX102PrickHMI.exe
+  
+  Build succeeded.
+      0 Warning(s)
+      0 Error(s)
+  
+  Time Elapsed 00:00:00.53
+
+RESULT: PASS - both style keys present, no IsMonitorSelected in HoldButtonStyle, build 0 errors. (Initial FAIL verdict was a script false-positive: pattern 'error' matched the '0 Error(s)' summary line; build output above shows 'Build succeeded. 0 Error(s)'.)

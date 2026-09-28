@@ -1,0 +1,20 @@
+﻿ 
+Change: bind-monitor-plc-points
+Schema: spec-driven
+Change root: F:\CX102PrickHMI\openspec\changes\bind-monitor-plc-points
+Progress: 4/4 artifacts complete
+
+[x] proposal
+[x] specs
+[x] design
+[x] tasks
+
+All planning artifacts complete!
+Next: openspec instructions apply --change "bind-monitor-plc-points" --json
+
+Change 'bind-monitor-plc-points' is valid
+
+proposal.md: True
+design.md: True
+tasks.md: True
+specs/monitor-plc-binding/spec.md: True

@@ -1,0 +1,14 @@
+﻿Task 3 evidence: csproj entries for OverlapMonitor
+File: CX102PrickHMI\CX102PrickHMI.csproj
+Select-String -Pattern 'OverlapMonitor' -> 4 line hits (3 entries; 4th line is the required <DependentUpon>OverlapMonitorView.xaml</DependentUpon> inside the code-behind Compile entry)
+
+107: <Compile Include="ViewModels\OverlapMonitorViewModel.cs" />
+132: <Page Include="Views\OverlapMonitorView.xaml">
+145: <Compile Include="Views\OverlapMonitorView.xaml.cs">
+146: <DependentUpon>OverlapMonitorView.xaml</DependentUpon>
+
+Placement check:
+- ViewModels\OverlapMonitorViewModel.cs Compile directly after ViewModels\HistoryAlarmViewModel.cs Compile
+- Views\OverlapMonitorView.xaml Page directly after Views\HistoryAlarmView.xaml Page
+- Views\OverlapMonitorView.xaml.cs Compile (DependentUpon + SubType Code) directly after Views\HistoryAlarmView.xaml.cs Compile
+- No build run (Task 4 owns build). No other csproj changes.

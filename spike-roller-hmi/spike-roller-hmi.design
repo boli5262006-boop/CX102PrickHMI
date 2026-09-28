@@ -1,0 +1,136 @@
+{
+  "data": [
+    {
+      "id": "page-index",
+      "title": "刺辊监控",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753798800000,
+      "canvasData": {
+        "x": 816,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 901,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-a765c648",
+          "measuredAt": 1785662009942
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/index.html",
+        "interactions": [
+          {
+            "domId": "nav-alarms",
+            "targetPageId": "page-alarms",
+            "transitionLabel": "切换到报警记录"
+          },
+          {
+            "domId": "nav-history-alarms",
+            "targetPageId": "page-history-alarms",
+            "transitionLabel": "切换到历史报警"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-alarms",
+      "title": "报警记录",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753798800000,
+      "canvasData": {
+        "x": 200,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 901,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-8157afb5",
+          "measuredAt": 1785635207524
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/alarms.html",
+        "interactions": [
+          {
+            "domId": "nav-monitor",
+            "targetPageId": "page-index",
+            "transitionLabel": "切换到刺辊监控"
+          },
+          {
+            "domId": "nav-history-alarms",
+            "targetPageId": "page-history-alarms",
+            "transitionLabel": "切换到历史报警"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-history-alarms",
+      "title": "历史报警",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753900800000,
+      "canvasData": {
+        "x": 1432,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 901,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-f218eb64",
+          "measuredAt": 1785635207524
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/history-alarms.html",
+        "interactions": [
+          {
+            "domId": "nav-monitor",
+            "targetPageId": "page-index",
+            "transitionLabel": "切换到刺辊监控"
+          },
+          {
+            "domId": "nav-alarms",
+            "targetPageId": "page-alarms",
+            "transitionLabel": "切换到报警记录"
+          }
+        ]
+      }
+    },
+    {
+      "id": "image-001",
+      "title": "刺辊设备结构示意图",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1753900800000,
+      "canvasData": {
+        "x": 0,
+        "y": 500,
+        "naturalSize": {
+          "width": 1230,
+          "height": 710
+        }
+      },
+      "devMetadata": {
+        "imageSrc": "assets/spike-roller-device.png"
+      }
+    }
+  ],
+  "config": {
+    "autoLayout": false,
+    "deviceType": "desktop",
+    "resolution": {
+      "width": 1280,
+      "height": 800
+    },
+    "projectName": "刺辊自动化监控界面",
+    "designLibrary": null,
+    "visualEditorEnabled": false,
+    "showEdge": false
+  }
+}

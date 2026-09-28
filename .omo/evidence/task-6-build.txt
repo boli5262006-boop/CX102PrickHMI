@@ -1,0 +1,28 @@
+﻿=== Task 6 QA: MainViewModel build + grep checks ===
+Timestamp: 09/27/2026 12:03:35
+
+--- Select-String "private async Task GetOPCUAValue" (must match, NOT commented) ---
+Line 759: private async Task GetOPCUAValue(OPCUADevice opcua, OPCUA ua, CancellationToken token)
+CHECK line starts with // : PASS (not commented)
+
+--- Select-String "WriteNodeAsync" (must exist) ---
+Line 529: if (!await CommonMethods.plc.WriteNodeAsync<float>(address, value))
+Line 570: if (!await CommonMethods.plc.WriteNodeAsync<bool>(address, value))
+CHECK WriteNodeAsync hit count: 2
+
+--- Select-String "模拟数据" (must have 0 hits) ---
+CHECK 模拟数据 hit count: 0 (PASS)
+
+--- dotnet build CX102PrickHMI.sln -c Debug --nologo ---
+  Determining projects to restore...
+  Nothing to do. None of the projects specified contain packages to restore.
+  RID is: 
+  Platform is: x64
+  CX102PrickHMI -> F:\CX102PrickHMI\CX102PrickHMI\bin\Debug\CX102PrickHMI.exe
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.48
+CHECK build ended with 0 Error(s): PASS
