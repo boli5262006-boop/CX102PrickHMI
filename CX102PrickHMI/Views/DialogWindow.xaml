@@ -1,0 +1,32 @@
+<hc:Window
+    x:Class="CX102PrickHMI.Views.DialogWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    Title="提示"
+    Width="360"
+    SizeToContent="Height"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    WindowStartupLocation="CenterOwner"
+    FontFamily="{DynamicResource AppFont}"
+    PreviewKeyDown="Window_PreviewKeyDown">
+    <Grid Margin="24,20,24,20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock
+            Text="{Binding Message, RelativeSource={RelativeSource AncestorType={x:Type hc:Window}}}"
+            Foreground="{StaticResource Ink}"
+            FontSize="14"
+            TextWrapping="Wrap" />
+        <Button
+            Grid.Row="1"
+            HorizontalAlignment="Right"
+            Margin="0,20,0,0"
+            Content="确定"
+            Style="{StaticResource PrimaryButtonStyle}"
+            Click="OkButton_Click" />
+    </Grid>
+</hc:Window>

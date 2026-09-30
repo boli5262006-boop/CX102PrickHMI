@@ -19,5 +19,17 @@ namespace CX102PrickHMI.Services
             }
         }
 
+        public List<Alarms> GetByTimeRange(DateTime startInclusive, DateTime endExclusive)
+        {
+            using (SqlSugarClient db = new SqlSugarClient(connectionConfig))
+            {
+                return db.Queryable<Alarms>()
+                    .Where(a => a.InsertTime >= startInclusive && a.InsertTime < endExclusive)
+                    .OrderBy(a => a.InsertTime)
+                    .OrderBy(a => a.AlarmState)
+                    .ToList();
+            }
+        }
+
     }
 }

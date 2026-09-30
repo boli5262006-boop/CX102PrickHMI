@@ -3,8 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
              xmlns:vm="clr-namespace:CX102PrickHMI.ViewModels"
-             d:DataContext="{d:DesignInstance Type=vm:HistoryAlarmViewModel}"
+             d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
              mc:Ignorable="d"
              Background="{StaticResource PageBackground}">
     <Grid Margin="24,0,24,24">
@@ -18,25 +19,29 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="140" />
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="140" />
-                    <ColumnDefinition Width="140" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="日期范围" Foreground="{StaticResource Ink2}" VerticalAlignment="Center" Margin="0,0,16,0" />
-                <TextBox Grid.Column="1" Text="2026-07-01" Style="{StaticResource InputStyle}" Margin="0,0,10,0" />
+                <hc:DateTimePicker Grid.Column="1"
+                                   SelectedDateTime="{Binding HistoryStartTime, Mode=TwoWay}"
+                                   DateTimeFormat="yyyy-MM-dd HH:mm:ss"
+                                   Width="190"
+                                   Margin="0,0,10,0" />
                 <TextBlock Grid.Column="2" Text="至" Foreground="{StaticResource Ink3}" VerticalAlignment="Center" Margin="0,0,10,0" />
-                <TextBox Grid.Column="3" Text="2026-07-29" Style="{StaticResource InputStyle}" Margin="0,0,10,0" />
-                <ComboBox Grid.Column="4" SelectedIndex="0" Background="{StaticResource Surface2}" Foreground="{StaticResource Ink}" Margin="0,0,10,0">
-                    <ComboBoxItem Content="全部级别" />
-                    <ComboBoxItem Content="错误" />
-                    <ComboBoxItem Content="警告" />
-                    <ComboBoxItem Content="信息" />
-                </ComboBox>
-                <Button Grid.Column="5" Content="查询" Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,10,0" />
-                <Button Grid.Column="6" Content="导出" Style="{StaticResource SecondaryButtonStyle}" />
+                <hc:DateTimePicker Grid.Column="3"
+                                   SelectedDateTime="{Binding HistoryEndTime, Mode=TwoWay}"
+                                   DateTimeFormat="yyyy-MM-dd HH:mm:ss"
+                                   Width="190"
+                                   Margin="0,0,16,0" />
+                <Button Grid.Column="4" Content="近2小时" Style="{StaticResource HoldButtonStyle}" Margin="0,0,10,0" Command="{Binding QuickRange2hCommand}" />
+                <Button Grid.Column="5" Content="近6小时" Style="{StaticResource HoldButtonStyle}" Margin="0,0,10,0" Command="{Binding QuickRange6hCommand}" />
+                <Button Grid.Column="6" Content="查询" Style="{StaticResource HoldButtonStyle}" Command="{Binding QueryHistoryCommand}" />
             </Grid>
         </Border>
         <Border Grid.Row="2" Style="{StaticResource PanelStyle}" Padding="0">
@@ -51,13 +56,11 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="4*" />
-                            <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="2*" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="报警时间" Style="{StaticResource TableHeaderTextStyle}" />
                         <TextBlock Grid.Column="1" Text="报警内容" Style="{StaticResource TableHeaderTextStyle}" />
-                        <TextBlock Grid.Column="2" Text="级别" Style="{StaticResource TableHeaderTextStyle}" />
-                        <TextBlock Grid.Column="3" Text="恢复时间" Style="{StaticResource TableHeaderTextStyle}" />
+                        <TextBlock Grid.Column="2" Text="恢复时间" Style="{StaticResource TableHeaderTextStyle}" />
                     </Grid>
                 </Border>
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
@@ -69,13 +72,11 @@
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="2*" />
                                             <ColumnDefinition Width="4*" />
-                                            <ColumnDefinition Width="1*" />
                                             <ColumnDefinition Width="2*" />
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Text="{Binding Time}" Style="{StaticResource MonoTableCellTextStyle}" />
                                         <TextBlock Grid.Column="1" Text="{Binding Message}" Style="{StaticResource TableCellTextStyle}" />
-                                        <TextBlock Grid.Column="2" Text="{Binding Level}" Foreground="{StaticResource Warning}" Style="{StaticResource TableCellTextStyle}" />
-                                        <TextBlock Grid.Column="3" Text="{Binding RecoveryTime}" Style="{StaticResource MonoTableCellTextStyle}" Foreground="{StaticResource Ink2}" />
+                                        <TextBlock Grid.Column="2" Text="{Binding RecoveryTime}" Style="{StaticResource MonoTableCellTextStyle}" Foreground="{StaticResource Ink2}" />
                                     </Grid>
                                 </Border>
                             </DataTemplate>
@@ -84,8 +85,8 @@
                 </ScrollViewer>
                 <Border Grid.Row="2" Background="{StaticResource Surface}" Padding="16,12">
                     <DockPanel>
+                        <TextBlock Text="{Binding HistoryStatus}" Foreground="{StaticResource Error}" FontSize="12" DockPanel.Dock="Right" />
                         <TextBlock Text="{Binding DateSummary}" Foreground="{StaticResource Ink3}" FontSize="12" />
-                        <TextBlock Text="第 1 / 1 页" Foreground="{StaticResource Ink3}" FontSize="12" DockPanel.Dock="Right" />
                     </DockPanel>
                 </Border>
             </Grid>

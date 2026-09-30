@@ -1,0 +1,24 @@
+# Tasks
+
+## 1. 样式资源审计与模型/服务接口基座
+
+- [x] 1.1 审计样式资源消费约定：静态检查 `Views/AlarmListView.xaml`、`Views/HistoryAlarmView.xaml`（及 `MonitorView.xaml`、`OverlapMonitorView.xaml`、`NumericKeypadOverlay.xaml`）所用全部 `StaticResource` 键（`PanelStyle`、`InputStyle`、`PrimaryButtonStyle`、`TableHeaderTextStyle`、`TableCellTextStyle`、`MonoTableCellTextStyle`、颜色画刷）均可经 `App.xaml` → `styles/Generic.xaml` → `Colors.xaml`/`Controls.xaml` 合并链解析；本次不新增资源字典，`CX102PrickHMI.csproj` 不改动；记录约定：若未来新增字典，必须显式添加 `<Page Include>` + `MSBuild:Compile` 条目且仅在 `styles/Generic.xaml` 合并，禁止视图级合并。验证：构建前后 csproj 无 diff；每个 `StaticResource` 键都能在合并链中找到定义（逐键核对记录）。
+- [x] 1.2 只读核对运行时报警配置语义：读取 `CX102PrickHMI/bin/Debug/Settings/settings.json`，确认 OPC UA Alarm 组共 48 个变量，其中高限报警使能 `HighAlarmEnable`（用户口径 `IsMaxAlarm`）10 点、低限报警使能 `LowAlarmEnable`（用户口径 `IsMinAlarm`）3 点；确认本次全部代码与产物仅使用运行时字段名 `HighAlarmEnable`/`HighAlarmNote` 与 `LowAlarmEnable`/`LowAlarmNote`，别名映射只作概念对应。验证：使能计数核对为 10/3；`settings.json` 保持只读，文件内容零修改（git status 无该文件变更）。
+- [x] 1.3 `Models/AlarmEntry.cs` 新增 get-only 属性 `VarName`，供实时行按 (VarName, message) 精确匹配去重/移除使用，不改任何 XAML 模板。验证：`dotnet build` 编译通过；`AlarmListView.xaml`/`HistoryAlarmView.xaml` 的 DataTemplate 无需变更。
+- [x] 1.4 `Interfaces/IAlarmRepository.cs` 新增 `List<Alarms> GetByTimeRange(DateTime startInclusive, DateTime endExclusive)`；`Services/AlarmService.cs` 在现有 per-call `SqlSugarClient` 上实现：`db.Queryable<Alarms>().Where(InsertTime ∈ [startInclusive, endExclusive)).OrderBy(InsertTime).OrderBy(AlarmState).ToList()`，第二个 OrderBy 作为同刻确定性排序（`到达`(U+5230) 先于 `离开`(U+79BB)）；`IRepository<T>` 保持不动，不引入 async API。验证：`dotnet build` 编译通过；静态检查确认单一查询、排序子句齐全、`IRepository.cs` 无改动（行为验证在 3.2 以种数据方式落地）。
+
+## 2. 报警事件处理与实时报警列表
+
+- [x] 2.1 `ViewModels/MainViewModel.cs`（`PlcDevice_AlarmTriggerEvent`，约 :843）将注释桩替换为完整处理体：`sender` 转 `VariableBase`；`!HighAlarmEnable && !LowAlarmEnable` 时直接忽略（未启用点位不进报警链路）；按使能方向取报警内容——`HighAlarmEnable` → `HighAlarmNote`，否则 `LowAlarmNote`，空值回退链：另一方向注释 → `e.AlarmNote` → `VarName` → `"未命名报警"`（内容永不为 null）；每事件仅取一次 `DateTime.Now`；同步持久化恰好一条 `Alarms { InsertTime, AlarmState = e.IsTrigger ? "到达" : "离开", AlarmNote, VarName, Symbol = null }`（追加式，离开不改写既有到达记录）；每次仓储调用 try/catch + `NLogHelper.Warn`，DB 故障不阻塞轮询线程、不崩溃。验证：`dotnet build` 通过；静态检查确认每事件恰好一次 Insert、`Symbol` 恒为 null、持久化在轮询线程上串行同步执行（无写队列）。
+- [x] 2.2 同一处理体内实现实时列表 UI 维护：经 `Application.Current.Dispatcher.BeginInvoke`（fire-and-forget，保持 FIFO）——`到达` 按 (VarName, message) 已存在则跳过（重复到达去重），否则 `AlarmItems.Insert(0, …)` 置顶；`离开` 移除首个 (VarName, message) 匹配行；Insert 失败仅记日志，实时列表增删不受 DB 成败影响。验证：`dotnet build` 通过；手动验收（PLC 或调试触发）——同一点位连续两次"到达"仅一行且位于列表顶部、状态显示"到达"；"离开"后该行消失、其余行不受影响。
+- [x] 2.3 `Views/AlarmListView.xaml` 级别列改为状态列：三列表头 报警时间/报警内容/状态，状态单元格恒显示 `到达`（不得出现级别列或"警告"占位文本）；`d:DesignInstance` 改指 `MainViewModel`（不动死代码 ViewModel）。验证：`dotnet build` 通过；XAML 静态检查无"级别"表头；运行应用核对激活报警行状态列显示"到达"。
+
+## 3. 历史报警查询与恢复时间配对
+
+- [x] 3.1 `ViewModels/MainViewModel.cs` 新增 `StartDateText`/`EndDateText`（TextBox 绑定）、`QueryHistoryCommand`（`AsyncRelayCommand`，运行期间禁用防重入）、`HistoryStatus`（仅内联查询/DB 失败文本）；查询前置校验（设计 D7）：两字段按 `yyyy-MM-dd` 固定文化解析、start ≤ end、跨度 ≤ 2 天（48 小时，如 2026-07-01~2026-07-02 合法、+2026-07-03 拒绝）；任一违规即 `MessageBox.Show`（仅 OK）提示具体原因（格式/倒置/超过48小时）+ NLog 记录并跳过查询，确认后用户可修正日期重查；过滤窗口末端取 `endDate.Date + 1 天`（结束日全天含边界），实际调用 `GetByTimeRange(start, DateTime.Now)` 并包在 `Task.Run` 内。验证：`dotnet build` 通过；手动验收——倒置范围与 3 天范围均弹提示对话框且不执行查询，合法两整天范围正常查询，成功后清空 `HistoryStatus`。
+- [x] 3.2 实现历史配对投影（设计 D5，内存投影、不改写事件行）：按 `GetByTimeRange` 返回顺序遍历，身份键 `(Normalize(VarName), Normalize(AlarmNote))`，"到达"压栈、"离开"弹出最近同身份"到达"配成一集；恢复时间 = 配对离开时间，未配对/仍激活显示空串；孤儿"离开"（到达在窗口前）丢弃；UI 线程按报警时间倒序填充 `HistoryItems`。验证：确定性数据缝——用 SQLite 脚本向 `CX102PrickHMI/bin/Debug/data.db` 种入已知到达/离开行（含跨窗口离开、未恢复到达、孤儿离开）后查询：配对行恢复时间正确、未恢复行恢复时间为空、孤儿离开不出现、范围内边界（起始日 00:00 与结束日 23:59）记录均包含且倒序展示。
+- [x] 3.3 `Views/HistoryAlarmView.xaml` 重构为恰好三列：报警时间、报警内容、恢复时间（无级别列）；整体删除级别筛选 ComboBox（全部级别/错误/警告/信息）、"导出"按钮与"第 1 / 1 页"分页文本（不新增 PageText 属性）；起始/结束 `TextBox`(`InputStyle`) 绑定 `StartDateText`/`EndDateText`，查询 `Button`(`PrimaryButtonStyle`) 绑定 `QueryHistoryCommand`，`ItemsControl` `ItemsSource` 绑定 `HistoryItems`（ScrollViewer 全量滚动展示、不分页），页脚 `DateSummary` 显示真实 `"共 N 条记录 · {start} 至 {end}"`，`HistoryStatus` 内联显示查询/DB 失败文本（校验拒绝仍走对话框）；沿用现有表头/单元格样式，`d:DesignInstance` 改指 `MainViewModel`。验证：`dotnet build` 通过；XAML 静态检查确认级别列、级别下拉框、导出按钮、分页文本均不存在且恰为三列；运行应用核对真实绑定生效、超一屏结果可滚动查看。
+
+## 4. 集成验证与整体验收
+
+- [x] 4.1 最终集成验证：solution 级 `dotnet build`（0 错误）；`openspec validate implement-alarm-history-and-style-conventions --strict` 通过且 `openspec status --change implement-alarm-history-and-style-conventions --json` 全部 done；WPF 绑定与资源复查——所有 Binding 路径在 `MainViewModel` 上存在、所有 `StaticResource` 键经 `App.xaml` → `styles/Generic.xaml` 链可解析、无视图级合并字典、无新增 csproj Page 条目；连接 PLC 后用户可见行为整体验收：高限与低限各触发一次（实时行置顶、状态列=到达、无级别列；`data.db` 出现到达/离开两行且 `Symbol` 为空）、重复到达去重、离开移除实时行、起止两天含边界的历史查询正确且倒序、倒置/超 48h 弹拒绝对话框、报警激活中重启 HMI 后实时列表为空（设计 D8 既定行为）、查询期间占用 `data.db` 时内联"查询失败"且不崩溃。验证：以上各项逐条执行并记录结果，全部通过后本任务完成。

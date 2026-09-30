@@ -1,6 +1,10 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ResourceDictionary.MergedDictionaries>
+        <!-- HandyControl 深色主题：必须先于应用字典合并，保证应用隐式样式（如 ScrollBar）后合并覆盖 -->
+        <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
         <ResourceDictionary Source="/CX102PrickHMI;component/styles/Colors.xaml" />
         <ResourceDictionary Source="/CX102PrickHMI;component/styles/Controls.xaml" />
+        <ResourceDictionary Source="/CX102PrickHMI;component/styles/ScrollBars.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

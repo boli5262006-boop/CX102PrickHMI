@@ -1,4 +1,4 @@
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CX102PrickHMI.Interfaces;
 using CX102PrickHMI.Models;
@@ -33,6 +33,14 @@ namespace CX102PrickHMI.ViewModels
         None,
         In,
         Out
+    }
+
+    // 搭接三段判定：单一分类结果，Warning/OutOfRange 两个布尔均由它投影而来
+    internal enum SpliceBand
+    {
+        Normal,
+        Warning,
+        Alarm
     }
 
     public sealed class MainViewModel : ObservableObject
@@ -97,6 +105,14 @@ namespace CX102PrickHMI.ViewModels
             HoldJogBwdCommand = new RelayCommand<bool>(value => _ = SendMomentaryAsync("CmdJogBwd", value));
             ResetCommand = new AsyncRelayCommand(ResetPulseAsync);
 
+            // 历史查询：默认前一日 00:00:00 至 当日 00:00:00（24 小时，满足 48 小时规则）
+            var today = DateTime.Today;
+            HistoryStartTime = today.AddDays(-1);
+            HistoryEndTime = today;
+            QueryHistoryCommand = new AsyncRelayCommand(QueryHistoryAsync);
+            QuickRange2hCommand = new AsyncRelayCommand(QueryLast2HoursAsync);
+            QuickRange6hCommand = new AsyncRelayCommand(QueryLast6HoursAsync);
+
             var result = GetDeviceByPath(xmlPath);
             if (result.IsSuccess)
             {
@@ -146,9 +162,9 @@ namespace CX102PrickHMI.ViewModels
             UpdateBoolSnapshot(values, "MainMachineStop", v => MainMachineStop = v);
             UpdateBoolSnapshot(values, "TriggerMaintenance", v => TriggerMaintenance = v);
 
-            UpdateSpliceSnapshot(values, "SpliceValue1", v => SpliceValue1Value = v, v => SpliceValue1Delta = v, v => SpliceValue1OutOfRange = v);
-            UpdateSpliceSnapshot(values, "SpliceValue2", v => SpliceValue2Value = v, v => SpliceValue2Delta = v, v => SpliceValue2OutOfRange = v);
-            UpdateSpliceSnapshot(values, "SpliceValue3", v => SpliceValue3Value = v, v => SpliceValue3Delta = v, v => SpliceValue3OutOfRange = v);
+            UpdateSpliceSnapshot(values, "SpliceValue1", v => SpliceValue1Value = v, v => SpliceValue1Delta = v, v => SpliceValue1Warning = v, v => SpliceValue1OutOfRange = v);
+            UpdateSpliceSnapshot(values, "SpliceValue2", v => SpliceValue2Value = v, v => SpliceValue2Delta = v, v => SpliceValue2Warning = v, v => SpliceValue2OutOfRange = v);
+            UpdateSpliceSnapshot(values, "SpliceValue3", v => SpliceValue3Value = v, v => SpliceValue3Delta = v, v => SpliceValue3Warning = v, v => SpliceValue3OutOfRange = v);
             UpdateBoolSnapshot(values, "StsNewRcpBlink", v => StsNewRcpBlink = v);
             RefreshSpliceBanner();
 
@@ -218,7 +234,15 @@ namespace CX102PrickHMI.ViewModels
             return raw is bool b ? b : (bool.TryParse(Convert.ToString(raw, CultureInfo.InvariantCulture), out var parsed) && parsed);
         }
 
-        private void UpdateSpliceSnapshot(Dictionary<string, object> values, string key, Action<double> assignValue, Action<string> assignDelta, Action<bool> assignOutOfRange)
+        // 搭接三段分类：严格不等号、无容差。v<2 或 v>6 报警；2/6 精确值为预警；3..5（含端点）正常
+        private static SpliceBand ClassifySplice(double v)
+        {
+            if (v < 2.0 || v > 6.0) return SpliceBand.Alarm;    // 超出 4±2，端点不判红
+            if (v < 3.0 || v > 5.0) return SpliceBand.Warning;  // 超出 4±1 但仍在 4±2 内，端点不判黄
+            return SpliceBand.Normal;                           // 3..5 含端点
+        }
+
+        private void UpdateSpliceSnapshot(Dictionary<string, object> values, string key, Action<double> assignValue, Action<string> assignDelta, Action<bool> assignWarning, Action<bool> assignOutOfRange)
         {
             object raw;
             bool found;
@@ -231,14 +255,18 @@ namespace CX102PrickHMI.ViewModels
             if (!float.TryParse(Convert.ToString(raw, CultureInfo.InvariantCulture), NumberStyles.Float, CultureInfo.InvariantCulture, out f)) return;
             var v = (double)f;
             assignValue(v);
-            var outOfRange = v < 2.0 || v > 6.0;
-            assignOutOfRange(outOfRange);
-            assignDelta((v - 4.0).ToString("+0.0;-0.0;0.0", CultureInfo.InvariantCulture) + (outOfRange ? " 瓒呴檺" : ""));
+            var band = ClassifySplice(v);
+            assignWarning(band == SpliceBand.Warning);
+            assignOutOfRange(band == SpliceBand.Alarm);
+            var suffix = band == SpliceBand.Alarm ? " 超限" : band == SpliceBand.Warning ? " 预警" : "";
+            assignDelta((v - 4.0).ToString("+0.0;-0.0;0.0", CultureInfo.InvariantCulture) + suffix);
         }
 
         private void RefreshSpliceBanner()
         {
+            var anyWarning = SpliceValue1Warning || SpliceValue2Warning || SpliceValue3Warning;
             HasAnySpliceAlarm = SpliceValue1OutOfRange || SpliceValue2OutOfRange || SpliceValue3OutOfRange;
+            HasAnySpliceWarning = anyWarning && !HasAnySpliceAlarm;
         }
 
         public object CurrentPage
@@ -346,7 +374,7 @@ namespace CX102PrickHMI.ViewModels
             private set { SetProperty(ref _driveOutEnable, value); }
         }
 
-        // 语义：false = 运行中，true = 已停机
+        // 语义：false = 运行中，true = 已停止
         private bool _mainMachineStop;
         public bool MainMachineStop
         {
@@ -396,7 +424,7 @@ namespace CX102PrickHMI.ViewModels
             private set { SetProperty(ref _calibrationMessage, value); }
         }
 
-        // 报警脉冲本轮恒为关（原 AlarmListViewModel 合并处，本轮用不到）
+        // 报警脉冲本轮恒为关（自 AlarmListViewModel 合并处，本轮用不到）
         public bool IsAlarmActive
         {
             get { return false; }
@@ -438,7 +466,7 @@ namespace CX102PrickHMI.ViewModels
             }
         }
 
-        // 首键替换标志：打开键盘或 C 清空后置 true，下一个数字/点整体替换输入缓冲
+        // 首键替换标志：打开键盘或 C 清空后置 true，下一个数字键整体替换输入缓冲
         private bool _keypadFreshInput;
 
         private string _keypadEditValue = "";
@@ -624,7 +652,7 @@ namespace CX102PrickHMI.ViewModels
             }
         }
 
-        // 点动命令：按下 true / 松开或失去捕获 false
+        // 点动命令：按下发 true / 松开或失去捕获发 false
         private async Task SendMomentaryAsync(string varName, bool value)
         {
             try
@@ -648,7 +676,7 @@ namespace CX102PrickHMI.ViewModels
             }
         }
 
-        // 复位：一次点击发 true，100ms 后发 false
+        // 复位：一次点击发 true，50ms 后发 false
         private async Task ResetPulseAsync()
         {
             try
@@ -682,7 +710,226 @@ namespace CX102PrickHMI.ViewModels
 
         // —— 历史报警页（原 HistoryAlarmViewModel 合并） ——
         public ObservableCollection<AlarmEntry> HistoryItems { get; private set; }
-        public string DateSummary { get { return ""; } }
+
+        // 查询成功后的结果摘要：共 N 条记录 · {start} 至 {end}；失败时保留上次成功摘要
+        private string _dateSummary = "";
+        public string DateSummary
+        {
+            get { return _dateSummary; }
+            private set { SetProperty(ref _dateSummary, value); }
+        }
+
+        // 历史查询精确起止时间（DateTimePicker SelectedDateTime 绑定，可空）
+        private DateTime? _historyStartTime;
+        public DateTime? HistoryStartTime
+        {
+            get { return _historyStartTime; }
+            set { SetProperty(ref _historyStartTime, value); }
+        }
+
+        private DateTime? _historyEndTime;
+        public DateTime? HistoryEndTime
+        {
+            get { return _historyEndTime; }
+            set { SetProperty(ref _historyEndTime, value); }
+        }
+
+        // 内联查询/DB 失败文本；校验拒绝走对话框，不占用此字段
+        private string _historyStatus = "";
+        public string HistoryStatus
+        {
+            get { return _historyStatus; }
+            private set { SetProperty(ref _historyStatus, value); }
+        }
+
+        // AsyncRelayCommand 运行期间自动禁用，防止快速连点并发查询
+        public IRelayCommand QueryHistoryCommand { get; }
+        public IRelayCommand QuickRange2hCommand { get; }
+        public IRelayCommand QuickRange6hCommand { get; }
+
+        // 跨命令并发护栏：任一历史查询在途时，其余查询/快捷命令静默跳过
+        private bool _historyQueryRunning;
+
+        // 历史查询：校验（精确 48 小时上限）→ Task.Run 查库至当前时刻（便于配对跨窗口的离开）→ 内存配对投影 → UI 线程回填
+        private async Task QueryHistoryAsync()
+        {
+            if (_historyQueryRunning)
+            {
+                return;
+            }
+            _historyQueryRunning = true;
+            try
+            {
+                if (HistoryStartTime == null || HistoryEndTime == null)
+                {
+                    RejectHistoryRange("请选择有效的起始与结束时间");
+                    return;
+                }
+
+                var start = HistoryStartTime.Value;
+                var end = HistoryEndTime.Value;
+
+                if (start > end)
+                {
+                    RejectHistoryRange("起始时间不能晚于结束时间，请检查所选范围");
+                    return;
+                }
+
+                // 精确 48 小时上限：恰好 48 小时允许，超过拒绝
+                if (end - start > TimeSpan.FromHours(48))
+                {
+                    RejectHistoryRange("查询跨度不能超过 48 小时，请缩小时间范围");
+                    return;
+                }
+
+                try
+                {
+                    // 实际查库到当前时刻：结束之后发生的离开也能配对出真实恢复时间
+                    var rows = await Task.Run(() => alarmservice.GetByTimeRange(start, DateTime.Now));
+                    var entries = BuildHistoryProjection(rows, start, end);
+
+                    var dispatcher = Application.Current != null ? Application.Current.Dispatcher : null;
+                    if (dispatcher == null)
+                    {
+                        return;
+                    }
+
+                    dispatcher.Invoke(new Action(() =>
+                    {
+                        HistoryItems.Clear();
+                        foreach (var entry in entries)
+                        {
+                            HistoryItems.Add(entry);
+                        }
+                    }));
+
+                    HistoryStatus = "";
+                    DateSummary = string.Format(
+                        CultureInfo.InvariantCulture,
+                        "共 {0} 条记录 · {1} 至 {2}",
+                        entries.Count, FormatHistoryTimestamp(start), FormatHistoryTimestamp(end));
+                }
+                catch (Exception ex)
+                {
+                    HistoryStatus = "查询失败，请稍后重试";
+                    NLogHelper.Warn("历史报警查询失败", ex);
+                    Views.DialogWindow.ShowInfo("查询失败，请稍后重试");
+                }
+            }
+            finally
+            {
+                _historyQueryRunning = false;
+            }
+        }
+
+        // 快捷范围：单次取时保证 start <= end，设置控件后立即查询
+        private async Task QueryQuickRangeAsync(double hours)
+        {
+            var now = DateTime.Now;
+            HistoryStartTime = now.AddHours(-hours);
+            HistoryEndTime = now;
+            await QueryHistoryAsync();
+        }
+
+        private async Task QueryLast2HoursAsync()
+        {
+            await QueryQuickRangeAsync(2);
+        }
+
+        private async Task QueryLast6HoursAsync()
+        {
+            await QueryQuickRangeAsync(6);
+        }
+
+        // 校验拒绝：主题化对话框 + 日志，不执行查询，不改动当前结果/摘要/状态
+        private void RejectHistoryRange(string reason)
+        {
+            NLogHelper.Warn("历史查询时间范围被拒绝: " + reason);
+            Views.DialogWindow.ShowInfo(reason);
+        }
+
+        // 内存配对投影（设计 D5），不改写任何事件行：按查询顺序（时间升序，同刻到达先于离开）遍历，
+        // 身份键为归一化 (VarName, AlarmNote)；到达压栈、离开弹出最近同身份到达配成一集；
+        // 孤儿离开（到达在窗口前）丢弃；未配对到达（仍激活）恢复时间显示空串
+        private static List<AlarmEntry> BuildHistoryProjection(List<Models.Alarms> rows, DateTime windowStartInclusive, DateTime windowEndExclusive)
+        {
+            var arrivals = new List<Models.Alarms>();
+            var openArrivals = new Dictionary<Tuple<string, string>, Stack<Models.Alarms>>();
+            var recoveryByArrival = new Dictionary<Models.Alarms, DateTime>();
+
+            foreach (var row in rows)
+            {
+                if (row == null)
+                {
+                    continue;
+                }
+
+                var state = NormalizeIdentity(row.AlarmState);
+                if (state == "到达")
+                {
+                    var key = Tuple.Create(NormalizeIdentity(row.VarName), NormalizeIdentity(row.AlarmNote));
+                    Stack<Models.Alarms> stack;
+                    if (!openArrivals.TryGetValue(key, out stack))
+                    {
+                        stack = new Stack<Models.Alarms>();
+                        openArrivals[key] = stack;
+                    }
+                    stack.Push(row);
+                    arrivals.Add(row);
+                }
+                else if (state == "离开")
+                {
+                    var key = Tuple.Create(NormalizeIdentity(row.VarName), NormalizeIdentity(row.AlarmNote));
+                    Stack<Models.Alarms> stack;
+                    if (openArrivals.TryGetValue(key, out stack) && stack.Count > 0 && row.InsertTime.HasValue)
+                    {
+                        recoveryByArrival[stack.Pop()] = row.InsertTime.Value;
+                    }
+                    // 孤儿离开（到达不在窗口/无未闭合到达）或离开无时间戳：丢弃，保持到达未配对
+                }
+            }
+
+            // 只投影到达时间落在请求窗口内的行（查库至 now 带回的行均 >= 起始日，此处仍显式过滤）
+            for (int i = arrivals.Count - 1; i >= 0; i--)
+            {
+                var alarmTime = arrivals[i].InsertTime;
+                if (!alarmTime.HasValue || alarmTime.Value < windowStartInclusive || alarmTime.Value >= windowEndExclusive)
+                {
+                    arrivals.RemoveAt(i);
+                }
+            }
+
+            // 最新到达在前
+            arrivals.Sort((a, b) => b.InsertTime.Value.CompareTo(a.InsertTime.Value));
+
+            var projected = new List<AlarmEntry>();
+            foreach (var arrival in arrivals)
+            {
+                DateTime leaveTime;
+                var recovery = recoveryByArrival.TryGetValue(arrival, out leaveTime)
+                    ? FormatHistoryTimestamp(leaveTime)
+                    : string.Empty;
+
+                projected.Add(new AlarmEntry(
+                    FormatHistoryTimestamp(arrival.InsertTime.Value),
+                    arrival.AlarmNote ?? string.Empty,
+                    "到达",
+                    recovery,
+                    arrival.VarName));
+            }
+
+            return projected;
+        }
+
+        private static string NormalizeIdentity(string value)
+        {
+            return value == null ? string.Empty : value.Trim();
+        }
+
+        private static string FormatHistoryTimestamp(DateTime time)
+        {
+            return time.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+        }
 
         // —— 搭接监控页 (OverlapMonitorView) ——
         private double _spliceValue1Value;
@@ -727,6 +974,27 @@ namespace CX102PrickHMI.ViewModels
             private set { SetProperty(ref _spliceValue3OutOfRange, value); }
         }
 
+        private bool _spliceValue1Warning;
+        public bool SpliceValue1Warning
+        {
+            get { return _spliceValue1Warning; }
+            private set { SetProperty(ref _spliceValue1Warning, value); }
+        }
+
+        private bool _spliceValue2Warning;
+        public bool SpliceValue2Warning
+        {
+            get { return _spliceValue2Warning; }
+            private set { SetProperty(ref _spliceValue2Warning, value); }
+        }
+
+        private bool _spliceValue3Warning;
+        public bool SpliceValue3Warning
+        {
+            get { return _spliceValue3Warning; }
+            private set { SetProperty(ref _spliceValue3Warning, value); }
+        }
+
         private string _spliceValue1Delta = "";
         public string SpliceValue1Delta
         {
@@ -768,16 +1036,41 @@ namespace CX102PrickHMI.ViewModels
             }
         }
 
+        // 预警聚合：任一通道预警且无通道报警（红色优先已在 ViewModel 内折叠）
+        private bool _hasAnySpliceWarning;
+        public bool HasAnySpliceWarning
+        {
+            get { return _hasAnySpliceWarning; }
+            private set
+            {
+                if (SetProperty(ref _hasAnySpliceWarning, value))
+                {
+                    OnPropertyChanged(nameof(BannerText));
+                }
+            }
+        }
+
         public string BannerText
         {
             get
             {
-                if (!HasAnySpliceAlarm) return "检测正常 | SYSTEM NORMAL";
-                var parts = new List<string>();
-                if (SpliceValue1OutOfRange) parts.Add("P-01 前段");
-                if (SpliceValue2OutOfRange) parts.Add("P-02 中段");
-                if (SpliceValue3OutOfRange) parts.Add("P-03 后段");
-                return "报警 | ALARM: " + string.Join("、", parts.ToArray()) + " 搭接量超出标准范围 (4±2mm)";
+                if (HasAnySpliceAlarm)
+                {
+                    var parts = new List<string>();
+                    if (SpliceValue1OutOfRange) parts.Add("P-01 前段");
+                    if (SpliceValue2OutOfRange) parts.Add("P-02 中段");
+                    if (SpliceValue3OutOfRange) parts.Add("P-03 后段");
+                    return "报警 | ALARM: " + string.Join("、", parts.ToArray()) + " 搭接量超出标准范围 (4±2mm)";
+                }
+                if (HasAnySpliceWarning)
+                {
+                    var parts = new List<string>();
+                    if (SpliceValue1Warning) parts.Add("P-01 前段");
+                    if (SpliceValue2Warning) parts.Add("P-02 中段");
+                    if (SpliceValue3Warning) parts.Add("P-03 后段");
+                    return "预警 | WARNING: " + string.Join("、", parts.ToArray()) + " 搭接量接近标准范围 (4±1mm)";
+                }
+                return "检测正常 | SYSTEM NORMAL";
             }
         }
 
@@ -840,38 +1133,106 @@ namespace CX102PrickHMI.ViewModels
         private int heartbeatCheckInterval = 1000;
         private bool firstConnect;//第一次连接标志为
 
+        // 报警事件：轮询线程触发。先同步落库一条 Alarms，再调度到 UI 线程维护实时报警列表
         private void PlcDevice_AlarmTriggerEvent(object sender, AlarmEventArgs e)
         {
-            var vb = sender as OPCUAVariable;
-            if (vb == null) return;
+            var variable = sender as VariableBase;
+            if (variable == null || e == null)
+            {
+                return;
+            }
 
-            
-            string message = vb.HighAlarmEnable ? vb.HighAlarmNote : vb.LowAlarmNote;
+            // 只处理已启用的报警方向（上限/下限）
+            bool isMaxDirection = variable.HighAlarmEnable;
+            bool isMinDirection = variable.LowAlarmEnable;
+            if (!isMaxDirection && !isMinDirection)
+            {
+                return;
+            }
 
-        //    Application.Current.Dispatcher.Invoke(() =>
-        //    {
-        //        if (e.IsTrigger)
-        //        {
-        //            var exists = AlarmList.FirstOrDefault(a => a.Message == message && a.Status == position);
-        //            if (exists == null)
-        //            {
-        //                AlarmList.Insert(0, new AlarmItemModel
-        //                {
-        //                    Time = DateTime.Now.ToString(),
-        //                    Status = position,
-        //                    Message = message
-        //                });
-        //            }
-        //        }
-        //        else
-        //        {
-        //            var toRemove = AlarmList.Where(a => a.Message == message && a.Status == position).ToList();
-        //            foreach (var item in toRemove)
-        //            {
-        //                AlarmList.Remove(item);
-        //            }
-        //        }
-        //    });
+            // 描述取已启用方向的备注；未配置时借用另一方向，再兜底事件描述/变量名
+            string alarmNote = isMaxDirection ? variable.HighAlarmNote : variable.LowAlarmNote;
+            if (string.IsNullOrWhiteSpace(alarmNote))
+            {
+                alarmNote = isMaxDirection ? variable.LowAlarmNote : variable.HighAlarmNote;
+            }
+            if (string.IsNullOrWhiteSpace(alarmNote))
+            {
+                alarmNote = e.AlarmNote;
+            }
+            if (string.IsNullOrWhiteSpace(alarmNote))
+            {
+                alarmNote = variable.VarName;
+            }
+            if (string.IsNullOrWhiteSpace(alarmNote))
+            {
+                alarmNote = "未命名报警";
+            }
+
+            string varName = variable.VarName;
+            bool isArrival = e.IsTrigger;
+            string alarmState = isArrival ? "到达" : "离开";
+            DateTime insertTime = DateTime.Now;
+
+            // 每次事件只落库一条记录，失败只记日志，不影响界面刷新
+            try
+            {
+                if (alarmservice != null)
+                {
+                    alarmservice.Insert(new Models.Alarms()
+                    {
+                        InsertTime = insertTime,
+                        Symbol = null,
+                        AlarmState = alarmState,
+                        AlarmNote = alarmNote,
+                        VarName = varName
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                NLogHelper.Warn("报警记录写入数据库失败: " + alarmNote, ex);
+            }
+
+            // 实时列表的所有增删都在 UI 线程执行
+            var dispatcher = Application.Current != null ? Application.Current.Dispatcher : null;
+            if (dispatcher == null)
+            {
+                return;
+            }
+
+            dispatcher.BeginInvoke(new Action(() =>
+            {
+                if (isArrival)
+                {
+                    // 到达：按 变量名+内容 去重后插入队首
+                    foreach (var item in AlarmItems)
+                    {
+                        if (item.Message == alarmNote && string.Equals(item.VarName, varName, StringComparison.Ordinal))
+                        {
+                            return;
+                        }
+                    }
+                    AlarmItems.Insert(0, new AlarmEntry(
+                        insertTime.ToString("yyyy-MM-dd HH:mm:ss"),
+                        alarmNote,
+                        alarmState,
+                        string.Empty,
+                        varName));
+                }
+                else
+                {
+                    // 离开：移除同 变量名+内容 的在档行
+                    for (int i = AlarmItems.Count - 1; i >= 0; i--)
+                    {
+                        var item = AlarmItems[i];
+                        if (item.Message == alarmNote && string.Equals(item.VarName, varName, StringComparison.Ordinal))
+                        {
+                            AlarmItems.RemoveAt(i);
+                        }
+                    }
+                }
+            }));
         }
         private async Task PLCCOM(OPCUADevice device, OPCUA ua)
         {

@@ -70,6 +70,33 @@
                             </Setter.Value>
                         </Setter>
                         <Style.Triggers>
+                            <DataTrigger Binding="{Binding HasAnySpliceWarning}" Value="True">
+                                <Setter Property="BorderBrush" Value="{StaticResource Warning}" />
+                                <Setter Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect BlurRadius="20" Color="#F59E0B" Opacity="0.5" ShadowDepth="0" />
+                                    </Setter.Value>
+                                </Setter>
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard Name="BannerWarningPulse">
+                                        <Storyboard AutoReverse="True" RepeatBehavior="Forever">
+                                            <ColorAnimation
+                                                Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
+                                                Duration="0:0:0.8"
+                                                From="#F59E0B"
+                                                To="#66F59E0B" />
+                                            <DoubleAnimation
+                                                Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Opacity)"
+                                                Duration="0:0:0.8"
+                                                From="0.5"
+                                                To="0.2" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.EnterActions>
+                                <DataTrigger.ExitActions>
+                                    <StopStoryboard BeginStoryboardName="BannerWarningPulse" />
+                                </DataTrigger.ExitActions>
+                            </DataTrigger>
                             <DataTrigger Binding="{Binding HasAnySpliceAlarm}" Value="True">
                                 <Setter Property="BorderBrush" Value="#EF4444" />
                                 <Setter Property="Effect">
@@ -106,11 +133,14 @@
                             <Ellipse.Style>
                                 <Style TargetType="Ellipse">
                                     <Setter Property="Fill" Value="{StaticResource Success}" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding HasAnySpliceAlarm}" Value="True">
-                                            <Setter Property="Fill" Value="{StaticResource Error}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding HasAnySpliceWarning}" Value="True">
+                                                <Setter Property="Fill" Value="{StaticResource Warning}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding HasAnySpliceAlarm}" Value="True">
+                                                <Setter Property="Fill" Value="{StaticResource Error}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
                                 </Style>
                             </Ellipse.Style>
                         </Ellipse>
@@ -124,6 +154,9 @@
                                 <Style TargetType="TextBlock">
                                     <Setter Property="Foreground" Value="{StaticResource Success}" />
                                     <Style.Triggers>
+                                        <DataTrigger Binding="{Binding HasAnySpliceWarning}" Value="True">
+                                            <Setter Property="Foreground" Value="{StaticResource Warning}" />
+                                        </DataTrigger>
                                         <DataTrigger Binding="{Binding HasAnySpliceAlarm}" Value="True">
                                             <Setter Property="Foreground" Value="{StaticResource Error}" />
                                         </DataTrigger>
@@ -135,11 +168,14 @@
                             <Ellipse.Style>
                                 <Style TargetType="Ellipse">
                                     <Setter Property="Fill" Value="{StaticResource Success}" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding HasAnySpliceAlarm}" Value="True">
-                                            <Setter Property="Fill" Value="{StaticResource Error}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding HasAnySpliceWarning}" Value="True">
+                                                <Setter Property="Fill" Value="{StaticResource Warning}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding HasAnySpliceAlarm}" Value="True">
+                                                <Setter Property="Fill" Value="{StaticResource Error}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
                                 </Style>
                             </Ellipse.Style>
                         </Ellipse>
@@ -166,6 +202,38 @@
                                     </Setter.Value>
                                 </Setter>
                                 <Style.Triggers>
+                                <DataTrigger Binding="{Binding SpliceValue1Warning}" Value="True">
+                                    <Setter Property="BorderBrush" Value="{StaticResource Warning}" />
+                                    <Setter Property="Effect">
+                                        <Setter.Value>
+                                            <DropShadowEffect BlurRadius="40" Color="#F59E0B" Opacity="0.55" ShadowDepth="0" />
+                                        </Setter.Value>
+                                    </Setter>
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard Name="CardPulseWarning1">
+                                            <Storyboard AutoReverse="True" RepeatBehavior="Forever">
+                                                <ColorAnimation
+                                                    Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
+                                                    Duration="0:0:0.8"
+                                                    From="#F59E0B"
+                                                    To="#66F59E0B" />
+                                                <DoubleAnimation
+                                                    Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Opacity)"
+                                                    Duration="0:0:0.8"
+                                                    From="0.55"
+                                                    To="0.25" />
+                                                <DoubleAnimation
+                                                    Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.BlurRadius)"
+                                                    Duration="0:0:0.8"
+                                                    From="40"
+                                                    To="16" />
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.EnterActions>
+                                    <DataTrigger.ExitActions>
+                                        <StopStoryboard BeginStoryboardName="CardPulseWarning1" />
+                                    </DataTrigger.ExitActions>
+                                </DataTrigger>
                                 <DataTrigger Binding="{Binding SpliceValue1OutOfRange}" Value="True">
                                     <Setter Property="BorderBrush" Value="#EF4444" />
                                     <Setter Property="Effect">
@@ -206,6 +274,9 @@
                             <Style x:Key="CornerStyle1" TargetType="Path">
                                 <Setter Property="Stroke" Value="{StaticResource Primary}" />
                                 <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SpliceValue1Warning}" Value="True">
+                                        <Setter Property="Stroke" Value="{StaticResource Warning}" />
+                                    </DataTrigger>
                                     <DataTrigger Binding="{Binding SpliceValue1OutOfRange}" Value="True">
                                         <Setter Property="Stroke" Value="{StaticResource Error}" />
                                     </DataTrigger>
@@ -270,6 +341,10 @@
                                             <Setter Property="Background" Value="#1A22C55E" />
                                             <Setter Property="BorderBrush" Value="#4D22C55E" />
                                             <Style.Triggers>
+                                                <DataTrigger Binding="{Binding SpliceValue1Warning}" Value="True">
+                                                    <Setter Property="Background" Value="#1AF59E0B" />
+                                                    <Setter Property="BorderBrush" Value="#66F59E0B" />
+                                                </DataTrigger>
                                                 <DataTrigger Binding="{Binding SpliceValue1OutOfRange}" Value="True">
                                                     <Setter Property="Background" Value="#26EF4444" />
                                                     <Setter Property="BorderBrush" Value="#66EF4444" />
@@ -283,6 +358,10 @@
                                                 <Setter Property="Foreground" Value="{StaticResource Success}" />
                                                 <Setter Property="Text" Value="NORMAL" />
                                                 <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SpliceValue1Warning}" Value="True">
+                                                        <Setter Property="Foreground" Value="{StaticResource Warning}" />
+                                                        <Setter Property="Text" Value="WARN" />
+                                                    </DataTrigger>
                                                     <DataTrigger Binding="{Binding SpliceValue1OutOfRange}" Value="True">
                                                         <Setter Property="Foreground" Value="{StaticResource Error}" />
                                                         <Setter Property="Text" Value="ALARM" />
@@ -295,12 +374,16 @@
                                 <Border>
                                     <Border.Style>
                                         <Style TargetType="Border" BasedOn="{StaticResource PositionBadgeStyle}">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding SpliceValue1OutOfRange}" Value="True">
-                                                    <Setter Property="Background" Value="#19EF4444" />
-                                                    <Setter Property="BorderBrush" Value="#66EF4444" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SpliceValue1Warning}" Value="True">
+                                                        <Setter Property="Background" Value="#19F59E0B" />
+                                                        <Setter Property="BorderBrush" Value="#66F59E0B" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding SpliceValue1OutOfRange}" Value="True">
+                                                        <Setter Property="Background" Value="#19EF4444" />
+                                                        <Setter Property="BorderBrush" Value="#66EF4444" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
                                         </Style>
                                     </Border.Style>
                                     <StackPanel Orientation="Horizontal">
@@ -313,6 +396,9 @@
                                                 <Style TargetType="TextBlock">
                                                     <Setter Property="Foreground" Value="{StaticResource Primary}" />
                                                     <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding SpliceValue1Warning}" Value="True">
+                                                            <Setter Property="Foreground" Value="{StaticResource Warning}" />
+                                                        </DataTrigger>
                                                         <DataTrigger Binding="{Binding SpliceValue1OutOfRange}" Value="True">
                                                             <Setter Property="Foreground" Value="{StaticResource Error}" />
                                                         </DataTrigger>
@@ -348,6 +434,9 @@
                                 <Style TargetType="ctl:HslArcGauge">
                                     <Setter Property="GaugeColor" Value="{StaticResource Success}" />
                                     <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SpliceValue1Warning}" Value="True">
+                                            <Setter Property="GaugeColor" Value="{StaticResource Warning}" />
+                                        </DataTrigger>
                                         <DataTrigger Binding="{Binding SpliceValue1OutOfRange}" Value="True">
                                             <Setter Property="GaugeColor" Value="{StaticResource Error}" />
                                         </DataTrigger>
@@ -391,6 +480,10 @@
                                             <Setter Property="Fill" Value="#1422C55E" />
                                             <Setter Property="Stroke" Value="{StaticResource Success}" />
                                             <Style.Triggers>
+                                                <DataTrigger Binding="{Binding SpliceValue1Warning}" Value="True">
+                                                    <Setter Property="Fill" Value="#1AF59E0B" />
+                                                    <Setter Property="Stroke" Value="{StaticResource Warning}" />
+                                                </DataTrigger>
                                                 <DataTrigger Binding="{Binding SpliceValue1OutOfRange}" Value="True">
                                                     <Setter Property="Fill" Value="#1AEF4444" />
                                                     <Setter Property="Stroke" Value="{StaticResource Error}" />
@@ -404,6 +497,9 @@
                                         <Style TargetType="Path">
                                             <Setter Property="Stroke" Value="{StaticResource Success}" />
                                             <Style.Triggers>
+                                                <DataTrigger Binding="{Binding SpliceValue1Warning}" Value="True">
+                                                    <Setter Property="Stroke" Value="{StaticResource Warning}" />
+                                                </DataTrigger>
                                                 <DataTrigger Binding="{Binding SpliceValue1OutOfRange}" Value="True">
                                                     <Setter Property="Stroke" Value="{StaticResource Error}" />
                                                 </DataTrigger>
@@ -423,6 +519,9 @@
                                         <Style TargetType="TextBlock">
                                             <Setter Property="Foreground" Value="{StaticResource Success}" />
                                             <Style.Triggers>
+                                                <DataTrigger Binding="{Binding SpliceValue1Warning}" Value="True">
+                                                    <Setter Property="Foreground" Value="{StaticResource Warning}" />
+                                                </DataTrigger>
                                                 <DataTrigger Binding="{Binding SpliceValue1OutOfRange}" Value="True">
                                                     <Setter Property="Foreground" Value="{StaticResource Error}" />
                                                 </DataTrigger>
@@ -458,6 +557,9 @@
                                         <Style TargetType="TextBlock">
                                             <Setter Property="Foreground" Value="{StaticResource Success}" />
                                             <Style.Triggers>
+                                                <DataTrigger Binding="{Binding SpliceValue1Warning}" Value="True">
+                                                    <Setter Property="Foreground" Value="{StaticResource Warning}" />
+                                                </DataTrigger>
                                                 <DataTrigger Binding="{Binding SpliceValue1OutOfRange}" Value="True">
                                                     <Setter Property="Foreground" Value="{StaticResource Error}" />
                                                 </DataTrigger>
@@ -486,6 +588,38 @@
                                     </Setter.Value>
                                 </Setter>
                                 <Style.Triggers>
+                                <DataTrigger Binding="{Binding SpliceValue2Warning}" Value="True">
+                                    <Setter Property="BorderBrush" Value="{StaticResource Warning}" />
+                                    <Setter Property="Effect">
+                                        <Setter.Value>
+                                            <DropShadowEffect BlurRadius="40" Color="#F59E0B" Opacity="0.55" ShadowDepth="0" />
+                                        </Setter.Value>
+                                    </Setter>
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard Name="CardPulseWarning2">
+                                            <Storyboard AutoReverse="True" RepeatBehavior="Forever">
+                                                <ColorAnimation
+                                                    Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
+                                                    Duration="0:0:0.8"
+                                                    From="#F59E0B"
+                                                    To="#66F59E0B" />
+                                                <DoubleAnimation
+                                                    Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Opacity)"
+                                                    Duration="0:0:0.8"
+                                                    From="0.55"
+                                                    To="0.25" />
+                                                <DoubleAnimation
+                                                    Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.BlurRadius)"
+                                                    Duration="0:0:0.8"
+                                                    From="40"
+                                                    To="16" />
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.EnterActions>
+                                    <DataTrigger.ExitActions>
+                                        <StopStoryboard BeginStoryboardName="CardPulseWarning2" />
+                                    </DataTrigger.ExitActions>
+                                </DataTrigger>
                                 <DataTrigger Binding="{Binding SpliceValue2OutOfRange}" Value="True">
                                     <Setter Property="BorderBrush" Value="#EF4444" />
                                     <Setter Property="Effect">
@@ -526,6 +660,9 @@
                             <Style x:Key="CornerStyle2" TargetType="Path">
                                 <Setter Property="Stroke" Value="{StaticResource Primary}" />
                                 <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SpliceValue2Warning}" Value="True">
+                                        <Setter Property="Stroke" Value="{StaticResource Warning}" />
+                                    </DataTrigger>
                                     <DataTrigger Binding="{Binding SpliceValue2OutOfRange}" Value="True">
                                         <Setter Property="Stroke" Value="{StaticResource Error}" />
                                     </DataTrigger>
@@ -591,6 +728,10 @@
                                                 <Setter Property="Background" Value="#1A22C55E" />
                                                 <Setter Property="BorderBrush" Value="#4D22C55E" />
                                                 <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SpliceValue2Warning}" Value="True">
+                                                        <Setter Property="Background" Value="#1AF59E0B" />
+                                                        <Setter Property="BorderBrush" Value="#66F59E0B" />
+                                                    </DataTrigger>
                                                     <DataTrigger Binding="{Binding SpliceValue2OutOfRange}" Value="True">
                                                         <Setter Property="Background" Value="#26EF4444" />
                                                         <Setter Property="BorderBrush" Value="#66EF4444" />
@@ -604,6 +745,10 @@
                                                     <Setter Property="Foreground" Value="{StaticResource Success}" />
                                                     <Setter Property="Text" Value="NORMAL" />
                                                     <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding SpliceValue2Warning}" Value="True">
+                                                            <Setter Property="Foreground" Value="{StaticResource Warning}" />
+                                                            <Setter Property="Text" Value="WARN" />
+                                                        </DataTrigger>
                                                         <DataTrigger Binding="{Binding SpliceValue2OutOfRange}" Value="True">
                                                             <Setter Property="Foreground" Value="{StaticResource Error}" />
                                                             <Setter Property="Text" Value="ALARM" />
@@ -618,6 +763,10 @@
                                     <Border.Style>
                                         <Style TargetType="Border" BasedOn="{StaticResource PositionBadgeStyle}">
                                             <Style.Triggers>
+                                                <DataTrigger Binding="{Binding SpliceValue2Warning}" Value="True">
+                                                    <Setter Property="Background" Value="#19F59E0B" />
+                                                    <Setter Property="BorderBrush" Value="#66F59E0B" />
+                                                </DataTrigger>
                                                 <DataTrigger Binding="{Binding SpliceValue2OutOfRange}" Value="True">
                                                     <Setter Property="Background" Value="#19EF4444" />
                                                     <Setter Property="BorderBrush" Value="#66EF4444" />
@@ -635,6 +784,9 @@
                                                 <Style TargetType="TextBlock">
                                                     <Setter Property="Foreground" Value="{StaticResource Primary}" />
                                                     <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding SpliceValue2Warning}" Value="True">
+                                                            <Setter Property="Foreground" Value="{StaticResource Warning}" />
+                                                        </DataTrigger>
                                                         <DataTrigger Binding="{Binding SpliceValue2OutOfRange}" Value="True">
                                                             <Setter Property="Foreground" Value="{StaticResource Error}" />
                                                         </DataTrigger>
@@ -670,6 +822,9 @@
                                 <Style TargetType="ctl:HslArcGauge">
                                     <Setter Property="GaugeColor" Value="{StaticResource Success}" />
                                     <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SpliceValue2Warning}" Value="True">
+                                            <Setter Property="GaugeColor" Value="{StaticResource Warning}" />
+                                        </DataTrigger>
                                         <DataTrigger Binding="{Binding SpliceValue2OutOfRange}" Value="True">
                                             <Setter Property="GaugeColor" Value="{StaticResource Error}" />
                                         </DataTrigger>
@@ -713,6 +868,10 @@
                                             <Setter Property="Fill" Value="#1422C55E" />
                                             <Setter Property="Stroke" Value="{StaticResource Success}" />
                                             <Style.Triggers>
+                                                <DataTrigger Binding="{Binding SpliceValue2Warning}" Value="True">
+                                                    <Setter Property="Fill" Value="#1AF59E0B" />
+                                                    <Setter Property="Stroke" Value="{StaticResource Warning}" />
+                                                </DataTrigger>
                                                 <DataTrigger Binding="{Binding SpliceValue2OutOfRange}" Value="True">
                                                     <Setter Property="Fill" Value="#1AEF4444" />
                                                     <Setter Property="Stroke" Value="{StaticResource Error}" />
@@ -726,6 +885,9 @@
                                         <Style TargetType="Path">
                                             <Setter Property="Stroke" Value="{StaticResource Success}" />
                                             <Style.Triggers>
+                                                <DataTrigger Binding="{Binding SpliceValue2Warning}" Value="True">
+                                                    <Setter Property="Stroke" Value="{StaticResource Warning}" />
+                                                </DataTrigger>
                                                 <DataTrigger Binding="{Binding SpliceValue2OutOfRange}" Value="True">
                                                     <Setter Property="Stroke" Value="{StaticResource Error}" />
                                                 </DataTrigger>
@@ -745,6 +907,9 @@
                                         <Style TargetType="TextBlock">
                                             <Setter Property="Foreground" Value="{StaticResource Success}" />
                                             <Style.Triggers>
+                                                <DataTrigger Binding="{Binding SpliceValue2Warning}" Value="True">
+                                                    <Setter Property="Foreground" Value="{StaticResource Warning}" />
+                                                </DataTrigger>
                                                 <DataTrigger Binding="{Binding SpliceValue2OutOfRange}" Value="True">
                                                     <Setter Property="Foreground" Value="{StaticResource Error}" />
                                                 </DataTrigger>
@@ -780,6 +945,9 @@
                                         <Style TargetType="TextBlock">
                                             <Setter Property="Foreground" Value="{StaticResource Success}" />
                                             <Style.Triggers>
+                                                <DataTrigger Binding="{Binding SpliceValue2Warning}" Value="True">
+                                                    <Setter Property="Foreground" Value="{StaticResource Warning}" />
+                                                </DataTrigger>
                                                 <DataTrigger Binding="{Binding SpliceValue2OutOfRange}" Value="True">
                                                     <Setter Property="Foreground" Value="{StaticResource Error}" />
                                                 </DataTrigger>
@@ -808,6 +976,38 @@
                                     </Setter.Value>
                                 </Setter>
                                 <Style.Triggers>
+                                <DataTrigger Binding="{Binding SpliceValue3Warning}" Value="True">
+                                    <Setter Property="BorderBrush" Value="{StaticResource Warning}" />
+                                    <Setter Property="Effect">
+                                        <Setter.Value>
+                                            <DropShadowEffect BlurRadius="40" Color="#F59E0B" Opacity="0.55" ShadowDepth="0" />
+                                        </Setter.Value>
+                                    </Setter>
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard Name="CardPulseWarning3">
+                                            <Storyboard AutoReverse="True" RepeatBehavior="Forever">
+                                                <ColorAnimation
+                                                    Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
+                                                    Duration="0:0:0.8"
+                                                    From="#F59E0B"
+                                                    To="#66F59E0B" />
+                                                <DoubleAnimation
+                                                    Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Opacity)"
+                                                    Duration="0:0:0.8"
+                                                    From="0.55"
+                                                    To="0.25" />
+                                                <DoubleAnimation
+                                                    Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.BlurRadius)"
+                                                    Duration="0:0:0.8"
+                                                    From="40"
+                                                    To="16" />
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.EnterActions>
+                                    <DataTrigger.ExitActions>
+                                        <StopStoryboard BeginStoryboardName="CardPulseWarning3" />
+                                    </DataTrigger.ExitActions>
+                                </DataTrigger>
                                 <DataTrigger Binding="{Binding SpliceValue3OutOfRange}" Value="True">
                                     <Setter Property="BorderBrush" Value="#EF4444" />
                                     <Setter Property="Effect">
@@ -848,6 +1048,9 @@
                             <Style x:Key="CornerStyle3" TargetType="Path">
                                 <Setter Property="Stroke" Value="{StaticResource Primary}" />
                                 <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SpliceValue3Warning}" Value="True">
+                                        <Setter Property="Stroke" Value="{StaticResource Warning}" />
+                                    </DataTrigger>
                                     <DataTrigger Binding="{Binding SpliceValue3OutOfRange}" Value="True">
                                         <Setter Property="Stroke" Value="{StaticResource Error}" />
                                     </DataTrigger>
@@ -914,6 +1117,10 @@
                                             <Setter Property="Background" Value="#1A22C55E" />
                                             <Setter Property="BorderBrush" Value="#4D22C55E" />
                                             <Style.Triggers>
+                                                <DataTrigger Binding="{Binding SpliceValue3Warning}" Value="True">
+                                                    <Setter Property="Background" Value="#1AF59E0B" />
+                                                    <Setter Property="BorderBrush" Value="#66F59E0B" />
+                                                </DataTrigger>
                                                 <DataTrigger Binding="{Binding SpliceValue3OutOfRange}" Value="True">
                                                     <Setter Property="Background" Value="#26EF4444" />
                                                     <Setter Property="BorderBrush" Value="#66EF4444" />
@@ -927,6 +1134,10 @@
                                                 <Setter Property="Foreground" Value="{StaticResource Success}" />
                                                 <Setter Property="Text" Value="NORMAL" />
                                                 <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SpliceValue3Warning}" Value="True">
+                                                        <Setter Property="Foreground" Value="{StaticResource Warning}" />
+                                                        <Setter Property="Text" Value="WARN" />
+                                                    </DataTrigger>
                                                     <DataTrigger Binding="{Binding SpliceValue3OutOfRange}" Value="True">
                                                         <Setter Property="Foreground" Value="{StaticResource Error}" />
                                                         <Setter Property="Text" Value="ALARM" />
@@ -939,12 +1150,16 @@
                                 <Border>
                                     <Border.Style>
                                         <Style TargetType="Border" BasedOn="{StaticResource PositionBadgeStyle}">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding SpliceValue3OutOfRange}" Value="True">
-                                                    <Setter Property="Background" Value="#19EF4444" />
-                                                    <Setter Property="BorderBrush" Value="#66EF4444" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SpliceValue3Warning}" Value="True">
+                                                        <Setter Property="Background" Value="#19F59E0B" />
+                                                        <Setter Property="BorderBrush" Value="#66F59E0B" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding SpliceValue3OutOfRange}" Value="True">
+                                                        <Setter Property="Background" Value="#19EF4444" />
+                                                        <Setter Property="BorderBrush" Value="#66EF4444" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
                                         </Style>
                                     </Border.Style>
                                     <StackPanel Orientation="Horizontal">
@@ -957,6 +1172,9 @@
                                                 <Style TargetType="TextBlock">
                                                     <Setter Property="Foreground" Value="{StaticResource Primary}" />
                                                     <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding SpliceValue3Warning}" Value="True">
+                                                            <Setter Property="Foreground" Value="{StaticResource Warning}" />
+                                                        </DataTrigger>
                                                         <DataTrigger Binding="{Binding SpliceValue3OutOfRange}" Value="True">
                                                             <Setter Property="Foreground" Value="{StaticResource Error}" />
                                                         </DataTrigger>
@@ -992,6 +1210,9 @@
                                 <Style TargetType="ctl:HslArcGauge">
                                     <Setter Property="GaugeColor" Value="{StaticResource Success}" />
                                     <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SpliceValue3Warning}" Value="True">
+                                            <Setter Property="GaugeColor" Value="{StaticResource Warning}" />
+                                        </DataTrigger>
                                         <DataTrigger Binding="{Binding SpliceValue3OutOfRange}" Value="True">
                                             <Setter Property="GaugeColor" Value="{StaticResource Error}" />
                                         </DataTrigger>
@@ -1035,6 +1256,10 @@
                                             <Setter Property="Fill" Value="#1422C55E" />
                                             <Setter Property="Stroke" Value="{StaticResource Success}" />
                                             <Style.Triggers>
+                                                <DataTrigger Binding="{Binding SpliceValue3Warning}" Value="True">
+                                                    <Setter Property="Fill" Value="#1AF59E0B" />
+                                                    <Setter Property="Stroke" Value="{StaticResource Warning}" />
+                                                </DataTrigger>
                                                 <DataTrigger Binding="{Binding SpliceValue3OutOfRange}" Value="True">
                                                     <Setter Property="Fill" Value="#1AEF4444" />
                                                     <Setter Property="Stroke" Value="{StaticResource Error}" />
@@ -1048,6 +1273,9 @@
                                         <Style TargetType="Path">
                                             <Setter Property="Stroke" Value="{StaticResource Success}" />
                                             <Style.Triggers>
+                                                <DataTrigger Binding="{Binding SpliceValue3Warning}" Value="True">
+                                                    <Setter Property="Stroke" Value="{StaticResource Warning}" />
+                                                </DataTrigger>
                                                 <DataTrigger Binding="{Binding SpliceValue3OutOfRange}" Value="True">
                                                     <Setter Property="Stroke" Value="{StaticResource Error}" />
                                                 </DataTrigger>
@@ -1067,6 +1295,9 @@
                                         <Style TargetType="TextBlock">
                                             <Setter Property="Foreground" Value="{StaticResource Success}" />
                                             <Style.Triggers>
+                                                <DataTrigger Binding="{Binding SpliceValue3Warning}" Value="True">
+                                                    <Setter Property="Foreground" Value="{StaticResource Warning}" />
+                                                </DataTrigger>
                                                 <DataTrigger Binding="{Binding SpliceValue3OutOfRange}" Value="True">
                                                     <Setter Property="Foreground" Value="{StaticResource Error}" />
                                                 </DataTrigger>
@@ -1102,6 +1333,9 @@
                                         <Style TargetType="TextBlock">
                                             <Setter Property="Foreground" Value="{StaticResource Success}" />
                                             <Style.Triggers>
+                                                <DataTrigger Binding="{Binding SpliceValue3Warning}" Value="True">
+                                                    <Setter Property="Foreground" Value="{StaticResource Warning}" />
+                                                </DataTrigger>
                                                 <DataTrigger Binding="{Binding SpliceValue3OutOfRange}" Value="True">
                                                     <Setter Property="Foreground" Value="{StaticResource Error}" />
                                                 </DataTrigger>

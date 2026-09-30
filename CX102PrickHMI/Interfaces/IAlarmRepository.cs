@@ -9,6 +9,6 @@ namespace CX102PrickHMI.Interfaces
 {
     public interface  IAlarmRepository:IRepository<Alarms>
     {
-
+        List<Alarms> GetByTimeRange(DateTime startInclusive, DateTime endExclusive);
     }
 }

@@ -16,4 +16,16 @@
     <SolidColorBrush x:Key="Warning" Color="#F59E0B" />
     <SolidColorBrush x:Key="Error" Color="#EF4444" />
     <SolidColorBrush x:Key="Info" Color="#3B82F6" />
+
+    <!-- HandyControl 皮肤别名：让 HC 控件/对话框复用应用深色调色板 -->
+    <SolidColorBrush x:Key="PrimaryBrush" Color="#0EA5E9" />
+    <SolidColorBrush x:Key="DarkPrimaryBrush" Color="#0284C7" />
+    <SolidColorBrush x:Key="RegionBrush" Color="#1A1D23" />
+    <SolidColorBrush x:Key="SecondaryRegionBrush" Color="#232730" />
+    <SolidColorBrush x:Key="BorderBrush" Color="#3A3F49" />
+    <SolidColorBrush x:Key="SecondaryBorderBrush" Color="#3A3F49" />
+    <SolidColorBrush x:Key="PrimaryTextBrush" Color="#F0F1F3" />
+    <SolidColorBrush x:Key="SecondaryTextBrush" Color="#9CA3AF" />
+    <SolidColorBrush x:Key="ThirdlyTextBrush" Color="#6B7280" />
+    <SolidColorBrush x:Key="DangerBrush" Color="#EF4444" />
 </ResourceDictionary>

@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:CX102PrickHMI.ViewModels"
-    d:DataContext="{d:DesignInstance Type=vm:AlarmListViewModel}"
+    d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
     Background="{StaticResource PageBackground}"
     mc:Ignorable="d">
     <Grid Margin="24,0,24,24">
@@ -44,7 +44,7 @@
                         <TextBlock
                             Grid.Column="2"
                             Style="{StaticResource TableHeaderTextStyle}"
-                            Text="级别" />
+                            Text="状态" />
                     </Grid>
                 </Border>
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
@@ -70,7 +70,7 @@
                                             Grid.Column="2"
                                             Foreground="{StaticResource Warning}"
                                             Style="{StaticResource TableCellTextStyle}"
-                                            Text="{Binding Level}" />
+                                            Text="到达" />
                                     </Grid>
                                 </Border>
                             </DataTemplate>
@@ -84,7 +84,7 @@
                     <TextBlock
                         FontSize="12"
                         Foreground="{StaticResource Ink3}"
-                        Text="共 6 条报警记录 · 实时更新" />
+                        Text="实时更新" />
                 </Border>
             </Grid>
         </Border>
