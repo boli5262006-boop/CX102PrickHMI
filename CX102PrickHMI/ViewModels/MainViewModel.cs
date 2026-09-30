@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CX102PrickHMI.Interfaces;
 using CX102PrickHMI.Models;
@@ -66,7 +66,15 @@ namespace CX102PrickHMI.ViewModels
             //    VarName = "limitswitch"
             //});
 
-            Steps = new ObservableCollection<ProcessStep>();
+            Steps = new ObservableCollection<ProcessStep>
+            {
+                new ProcessStep("主线停机", "未开始", ProcessStepState.Pending, 1),
+                new ProcessStep("配方加载", "未开始", ProcessStepState.Pending, 2),
+                new ProcessStep("槽辊打开", "未开始", ProcessStepState.Pending, 3),
+                new ProcessStep("位置到达", "未开始", ProcessStepState.Pending, 4),
+                new ProcessStep("传送带回退", "未开始", ProcessStepState.Pending, 5),
+                new ProcessStep("槽辊收回", "未开始", ProcessStepState.Pending, 6)
+            };
             AlarmItems = new ObservableCollection<AlarmEntry>();
             HistoryItems = new ObservableCollection<AlarmEntry>();
 
@@ -101,8 +109,10 @@ namespace CX102PrickHMI.ViewModels
             HoldHomingInCommand = new RelayCommand<bool>(value => _ = SendMomentaryAsync("CmdHomingIn", value));
             HoldHomingOutCommand = new RelayCommand<bool>(value => _ = SendMomentaryAsync("CmdHomingOut", value));
             HoldSetupCommand = new RelayCommand<bool>(value => _ = SendMomentaryAsync("CmdSetup", value));
-            HoldJogFwdCommand = new RelayCommand<bool>(value => _ = SendMomentaryAsync("CmdJogFwd", value));
-            HoldJogBwdCommand = new RelayCommand<bool>(value => _ = SendMomentaryAsync("CmdJogBwd", value));
+            HoldJogInFwdCommand = new RelayCommand<bool>(value => _ = SendMomentaryAsync("CmdJogInFwd", value));
+            HoldJogInBwdCommand = new RelayCommand<bool>(value => _ = SendMomentaryAsync("CmdJogInBwd", value));
+            HoldJogOutFwdCommand = new RelayCommand<bool>(value => _ = SendMomentaryAsync("CmdJogOutFwd", value));
+            HoldJogOutBwdCommand = new RelayCommand<bool>(value => _ = SendMomentaryAsync("CmdJogOutBwd", value));
             ResetCommand = new AsyncRelayCommand(ResetPulseAsync);
 
             // 历史查询：默认前一日 00:00:00 至 当日 00:00:00（24 小时，满足 48 小时规则）
@@ -139,6 +149,28 @@ namespace CX102PrickHMI.ViewModels
         // CurrentValue 读写互斥锁：后台轮询写 / UI 泵读共用
         private static readonly object ValueLock = new object();
 
+        private static readonly string[] StepTagNames = { "MainMachineStop", "StsStepRcpLoaded", "StsStepRollerOpen", "StsStepAxisInPos", "StsStepConveyorDone", "StsStepRollerClosed" };
+
+        private static readonly string[] AlarmTagNames =
+        {
+            "AxisInCommError", "AxisInError", "AxisInOverload",
+            "AxisOutCommError", "AxisOutError", "AxisOutOverload",
+            "ConveyorBackTimeout", "GroovedExtTimeout", "GroovedRetTimeout",
+            "HeartbeatLost", "LimitBetween", "LimitSwitchIn", "LimitSwitchOut"
+        };
+
+        private void UpdateStepSnapshot(Dictionary<string, object> values, string key, int stepIndex)
+        {
+            object raw;
+            bool found;
+            lock (ValueLock)
+            {
+                found = values.TryGetValue(key, out raw);
+            }
+            if (!found) return;
+            var done = ParseBool(raw);
+            Steps[stepIndex].UpdateState(done ? ProcessStepState.Completed : ProcessStepState.Pending, done ? "已完成" : "未开始");
+        }
         // 500ms 快照泵：只读 CurrentValue 刷新界面属性，绝不写 PLC
         private void UpdateTimer_Tick(object sender, EventArgs e)
         {
@@ -168,6 +200,28 @@ namespace CX102PrickHMI.ViewModels
             UpdateBoolSnapshot(values, "StsNewRcpBlink", v => StsNewRcpBlink = v);
             RefreshSpliceBanner();
 
+            // 六步流程指示：点位 true=绿"已完成"，false=灰"未开始"（无红色态）
+            UpdateStepSnapshot(values, "MainMachineStop", 0);
+            UpdateStepSnapshot(values, "StsStepRcpLoaded", 1);
+            UpdateStepSnapshot(values, "StsStepRollerOpen", 2);
+            UpdateStepSnapshot(values, "StsStepAxisInPos", 3);
+            UpdateStepSnapshot(values, "StsStepConveyorDone", 4);
+            UpdateStepSnapshot(values, "StsStepRollerClosed", 5);
+
+            // 设备图片报警呼吸闪烁：13 个报警点位任一为真（搭接量超限不属于此报警源）
+            var anyAlarm = false;
+            lock (ValueLock)
+            {
+                foreach (var tag in AlarmTagNames)
+                {
+                    if (values.TryGetValue(tag, out var rawAlarm) && ParseBool(rawAlarm))
+                    {
+                        anyAlarm = true;
+                        break;
+                    }
+                }
+            }
+            IsAlarmActive = anyAlarm;
 
             // 原点值输入框：对应轴键盘打开期间暂停刷新，避免编辑值被覆盖
             if (KeypadTarget != KeypadTarget.In)
@@ -424,12 +478,56 @@ namespace CX102PrickHMI.ViewModels
             private set { SetProperty(ref _calibrationMessage, value); }
         }
 
-        // 报警脉冲本轮恒为关（自 AlarmListViewModel 合并处，本轮用不到）
+        // 设备图片报警呼吸闪烁：真实报警源判定（13 个报警点位任一为真）
+        private bool _isAlarmActive;
         public bool IsAlarmActive
         {
-            get { return false; }
+            get { return _isAlarmActive; }
+            private set { SetProperty(ref _isAlarmActive, value); }
         }
 
+        // HMI 与 PLC 通讯健康标志：心跳冻结超阈值 = true（驱动通讯异常弹窗与底栏状态圆点）
+        private bool _isCommAbnormal;
+        public bool IsCommAbnormal
+        {
+            get { return _isCommAbnormal; }
+            private set { SetProperty(ref _isCommAbnormal, value); }
+        }
+
+        private Views.DialogWindow _commDialog;
+
+        // PLCCOM 后台线程调用：经 UI 调度器切换标志并管理通讯异常弹窗生命周期（上升沿弹出、下降沿自动关闭、不重复弹）
+        private void SetCommAbnormal(bool abnormal)
+        {
+            var dispatcher = Application.Current?.Dispatcher;
+            if (dispatcher == null)
+            {
+                return;
+            }
+            dispatcher.BeginInvoke(new Action(() =>
+            {
+                if (IsCommAbnormal == abnormal)
+                {
+                    return;
+                }
+                IsCommAbnormal = abnormal;
+                if (abnormal)
+                {
+                    if (_commDialog == null)
+                    {
+                        _commDialog = Views.DialogWindow.ShowAlarm("PLC 通讯异常，数据可能停止更新");
+                    }
+                }
+                else
+                {
+                    if (_commDialog != null)
+                    {
+                        _commDialog.CloseAlarm();
+                        _commDialog = null;
+                    }
+                }
+            }));
+        }
         // —— 原点数字键盘状态 ——
         private KeypadTarget _keypadTarget;
         public KeypadTarget KeypadTarget
@@ -505,8 +603,10 @@ namespace CX102PrickHMI.ViewModels
         public IRelayCommand<bool> HoldHomingInCommand { get; }
         public IRelayCommand<bool> HoldHomingOutCommand { get; }
         public IRelayCommand<bool> HoldSetupCommand { get; }
-        public IRelayCommand<bool> HoldJogFwdCommand { get; }
-        public IRelayCommand<bool> HoldJogBwdCommand { get; }
+        public IRelayCommand<bool> HoldJogInFwdCommand { get; }
+        public IRelayCommand<bool> HoldJogInBwdCommand { get; }
+        public IRelayCommand<bool> HoldJogOutFwdCommand { get; }
+        public IRelayCommand<bool> HoldJogOutBwdCommand { get; }
         public IRelayCommand ResetCommand { get; }
 
         private void OpenKeypad(KeypadTarget target)
@@ -1080,7 +1180,6 @@ namespace CX102PrickHMI.ViewModels
         public ICommand ShowHistoryCommand { get; }
         public ICommand ExitCommand { get; }
         public string SystemStatus { get { return "主线运行中"; } }
-        public string FooterStatus { get { return "设备在线 · PLC 连接正常"; } }
         public string Version { get { return "v1.0.0"; } }
 
         public bool OpcConnected { get; private set; }
@@ -1128,7 +1227,7 @@ namespace CX102PrickHMI.ViewModels
         private string xmlPath = System.AppDomain.CurrentDomain.BaseDirectory + "\\Settings\\settings.json";
         private DispatcherTimer updateTimer;
         private int heartbeatFailureCount = 0; // 心跳失败次数计数器
-        private const int MaxHeartbeatFailures = 200000; // 允许的最大失败次数
+        private const int MaxHeartbeatFailures = 4; // 允许的最大失败次数
         private int previousHeartbeatValue = -1; // 存储上一次的心跳值
         private int heartbeatCheckInterval = 1000;
         private bool firstConnect;//第一次连接标志为
@@ -1257,6 +1356,7 @@ namespace CX102PrickHMI.ViewModels
                         {
                             // 连续多次失败，可能已断开连接
                             device.IsConnected = false;
+                            SetCommAbnormal(true);
                             await AttemptConnectionAndInitialData(ua, device);
                             heartbeatFailureCount = 0; // 重置计数器
 
@@ -1267,6 +1367,7 @@ namespace CX102PrickHMI.ViewModels
                         // 心跳值变化，重置失败计数器
                         heartbeatFailureCount = 0;
                         previousHeartbeatValue = currentHeartbeatValue;
+                        SetCommAbnormal(false);
                     }
                 }
                 await Task.Delay(heartbeatCheckInterval); // 检查间隔
@@ -1275,9 +1376,9 @@ namespace CX102PrickHMI.ViewModels
 
         private int ReadHeartbeat()
         {
-            if (CommonMethods.plcDevice.CurrentValue.ContainsKey("Heartbeat") &&
-                  CommonMethods.plcDevice.CurrentValue["Heartbeat"] != null &&
-                  int.TryParse(CommonMethods.plcDevice.CurrentValue["Heartbeat"].ToString(), out int result))
+            if (CommonMethods.plcDevice.CurrentValue.ContainsKey("HMIHeart") &&
+                  CommonMethods.plcDevice.CurrentValue["HMIHeart"] != null &&
+                  int.TryParse(CommonMethods.plcDevice.CurrentValue["HMIHeart"].ToString(), out int result))
             {
                 return result;
             }

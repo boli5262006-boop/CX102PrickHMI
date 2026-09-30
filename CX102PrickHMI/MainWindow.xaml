@@ -135,7 +135,21 @@
 
         <Border Grid.Row="3" Background="{StaticResource Surface}" BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Padding="24,12" Margin="0,0,0,20">
             <DockPanel>
-                <TextBlock Text="{Binding FooterStatus}" Foreground="{StaticResource Ink3}" FontSize="12" />
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="PLC连接状态" Foreground="{StaticResource Ink3}" FontSize="12" />
+                    <Ellipse Width="10" Height="10" Margin="8,0,0,0">
+                        <Ellipse.Style>
+                            <Style TargetType="Ellipse">
+                                <Setter Property="Fill" Value="{StaticResource Success}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsCommAbnormal}" Value="True">
+                                        <Setter Property="Fill" Value="{StaticResource Error}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Ellipse.Style>
+                    </Ellipse>
+                </StackPanel>
                 <TextBlock Text="{Binding Version}" Foreground="{StaticResource Ink3}" FontSize="12" DockPanel.Dock="Right" />
             </DockPanel>
         </Border>

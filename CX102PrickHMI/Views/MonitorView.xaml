@@ -16,12 +16,13 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <TextBlock
+        <!--<TextBlock
             Margin="0,20,0,12"
             FontSize="20"
             FontWeight="SemiBold"
             Foreground="{StaticResource Ink}"
-            Text="刺辊监控" />
+            Text="刺辊监控" />-->
+        <Border Height="20"/>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*" />
@@ -185,27 +186,29 @@
                                 </TextBox>
                             </StackPanel>
                         </Grid>
-                        <StackPanel Margin="0,18,0,18" Orientation="Horizontal">
-                            <Button
-                                Margin="0,0,12,0"
-                                b:MomentaryButtonBehavior.Command="{Binding HoldJogFwdCommand}"
-                                Content="点动前进"
-                                Style="{StaticResource HoldButtonStyle}" />
-                            <Button
-                                Margin="0,0,12,0"
-                                b:MomentaryButtonBehavior.Command="{Binding HoldJogBwdCommand}"
-                                Content="点动后退"
-                                Style="{StaticResource HoldButtonStyle}" />
-                            <Button
-                                Margin="0,0,12,0"
-                                b:MomentaryButtonBehavior.Command="{Binding HoldHomingInCommand}"
-                                Content="校准内侧"
-                                Style="{StaticResource HoldButtonStyle}" />
-                            <Button
-                                Margin="0,0,12,0"
-                                b:MomentaryButtonBehavior.Command="{Binding HoldHomingOutCommand}"
-                                Content="校准外侧"
-                                Style="{StaticResource HoldButtonStyle}" />
+                        <StackPanel Margin="0,18,0,18">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                <Button
+                                    Margin="0,0,12,0"
+                                    b:MomentaryButtonBehavior.Command="{Binding HoldJogInFwdCommand}"
+                                    Content="点动前进内侧"
+                                    Style="{StaticResource HoldButtonStyle}" />
+                                <Button
+                                    Margin="0,0,12,0"
+                                    b:MomentaryButtonBehavior.Command="{Binding HoldJogInBwdCommand}"
+                                    Content="点动后退内侧"
+                                    Style="{StaticResource HoldButtonStyle}" />
+                                <Button
+                                    Margin="0,0,12,0"
+                                    b:MomentaryButtonBehavior.Command="{Binding HoldJogOutFwdCommand}"
+                                    Content="点动前进外侧"
+                                    Style="{StaticResource HoldButtonStyle}" />
+                                <Button
+                                    b:MomentaryButtonBehavior.Command="{Binding HoldJogOutBwdCommand}"
+                                    Content="点动后退外侧"
+                                    Style="{StaticResource HoldButtonStyle}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
                             <Button b:MomentaryButtonBehavior.Command="{Binding HoldSetupCommand}" Content="设置">
                                 <Button.Style>
                                     <Style BasedOn="{StaticResource HoldButtonStyle}" TargetType="Button">
@@ -239,6 +242,7 @@
                                     </Style>
                                 </TextBlock.Style>
                             </TextBlock>
+                            </StackPanel>
                         </StackPanel>
                         <TextBlock
                             Margin="0,0,0,16"
@@ -505,7 +509,7 @@
                             </Ellipse>
                         </DockPanel>
                     </Border>
-                    <DockPanel Margin="0,10,0,0">
+                    <!--<DockPanel Margin="0,10,0,0">
                         <TextBlock Foreground="{StaticResource Ink}" Text="报警 0 条" />
                         <Ellipse
                             Width="12"
@@ -513,7 +517,7 @@
                             Margin="35,0,0,0"
                             DockPanel.Dock="Right"
                             Fill="{StaticResource Primary}" />
-                    </DockPanel>
+                    </DockPanel>-->
                 </StackPanel>
             </Border>
         </Grid>
