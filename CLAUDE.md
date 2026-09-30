@@ -31,6 +31,7 @@ CX102 刺辊设备的上位机 HMI（WPF 桌面程序）：监控页显示配方
 - **运行应用**: 构建 `dotnet run` 不适用于本项目（旧式 csproj），请直接运行 `CX102PrickHMI/CX102PrickHMI/bin/Debug/CX102PrickHMI.exe`
 
 ## 编码规范
+- **中文编码保护（最高优先级，永久有效）**: 本项目源码含大量中文注释与中文字符串。严禁使用 PowerShell 文本管道（`Get-Content`/`Set-Content`/`Out-File`/`-replace` 管道/`>` 重定向）读写或批量替换含中文的文件——Windows PowerShell 5.1 会把 UTF-8/UTF-16 文件按 ANSI(GBK) 重写，造成不可逆乱码（本项目已发生过一次，修复成本极高）。修改含中文的文件只允许两种方式：① Edit/Write 工具；② `[IO.File]::ReadAllText`/`WriteAllText` 并显式指定 UTF-8 编码。批量文本替换先将要写入的中文内容存为 UTF-8 映射文件（用 Write 工具生成），再用 .NET 脚本按编码读取应用。从 git 取原始字节用 `cmd /c "git show ... > 临时文件"`，不要用 PowerShell 的 `>`。若出现成批 CS1010/CS1056 编译错误或 `鍐呬晶` 类乱码，按 `encoding-corruption-recovery` 技能的修复阶梯处理。
 - **MVVM 强制执行**: 严格遵循 MVVM 模式，禁止在 `.xaml.cs` (Code-behind) 文件中编写业务逻辑。所有 UI 交互逻辑应通过 `RelayCommand` 和 `ObservableProperty` 等 MVVM 工具实现。
 - **命名约定**: 属性和方法使用 PascalCase，私有字段使用 camelCase 并带有 `_` 前缀。
 - **XAML 最佳实践**: 
