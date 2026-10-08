@@ -49,6 +49,19 @@
                         Command="{Binding ResetCommand}"
                         Content="复位"                  
                         Style="{StaticResource HoldButtonStyle}" />
+                    <ToggleButton
+                        Margin="40,0,0,0"
+                        VerticalAlignment="Center"
+                        Command="{Binding VerifyModeCommand}"
+                        CommandParameter="{Binding IsChecked, RelativeSource={RelativeSource Self}}"
+                        Content="验证模式"
+                        Style="{StaticResource VerifyToggleButtonStyle}" />
+                    <Button
+                        Margin="12,0,0,0"
+                        VerticalAlignment="Center"
+                        Command="{Binding VerifyClearCommand}"
+                        Content="验证清除"
+                        Style="{StaticResource HoldButtonStyle}" />
                 </StackPanel>
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
                     <Button Content="×" Command="{Binding ExitCommand}" Style="{StaticResource ExitButtonStyle}"/>

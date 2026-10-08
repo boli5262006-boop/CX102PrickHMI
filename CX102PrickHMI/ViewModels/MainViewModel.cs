@@ -114,6 +114,8 @@ namespace CX102PrickHMI.ViewModels
             HoldJogOutFwdCommand = new RelayCommand<bool>(value => _ = SendMomentaryAsync("CmdJogOutFwd", value));
             HoldJogOutBwdCommand = new RelayCommand<bool>(value => _ = SendMomentaryAsync("CmdJogOutBwd", value));
             ResetCommand = new AsyncRelayCommand(ResetPulseAsync);
+            VerifyModeCommand = new RelayCommand<bool>(value => _ = SendFloatAsync("VerifyMode", value ? 1f : 0f));
+            VerifyClearCommand = new AsyncRelayCommand(VerifyClearPulseAsync);
 
             // 历史查询：默认前一日 00:00:00 至 当日 00:00:00（24 小时，满足 48 小时规则）
             var today = DateTime.Today;
@@ -608,6 +610,8 @@ namespace CX102PrickHMI.ViewModels
         public IRelayCommand<bool> HoldJogOutFwdCommand { get; }
         public IRelayCommand<bool> HoldJogOutBwdCommand { get; }
         public IRelayCommand ResetCommand { get; }
+        public IRelayCommand<bool> VerifyModeCommand { get; }
+        public IRelayCommand VerifyClearCommand { get; }
 
         private void OpenKeypad(KeypadTarget target)
         {
@@ -802,6 +806,59 @@ namespace CX102PrickHMI.ViewModels
             {
                 CalibrationMessage = "复位写入失败";
                 NLogHelper.Warn("复位命令写入失败", ex);
+            }
+        }
+
+        // float 点位写入：验证模式/验证清除为 Float 类型
+        private async Task SendFloatAsync(string varName, float value)
+        {
+            try
+            {
+                string address;
+                if (!PlcTagLookup.TryGetAddress(CommonMethods.plcDevice, varName, out address))
+                {
+                    CalibrationMessage = "未找到点位地址: " + varName;
+                    return;
+                }
+
+                if (!await CommonMethods.plc.WriteNodeAsync<float>(address, value))
+                {
+                    CalibrationMessage = "命令写入失败: " + varName;
+                }
+            }
+            catch (Exception ex)
+            {
+                CalibrationMessage = "命令写入失败: " + varName;
+                NLogHelper.Warn("命令写入失败: " + varName, ex);
+            }
+        }
+
+        // 验证清除：一次点击发 1，1 秒后发 0
+        private async Task VerifyClearPulseAsync()
+        {
+            try
+            {
+                string address;
+                if (!PlcTagLookup.TryGetAddress(CommonMethods.plcDevice, "VerifyClear", out address))
+                {
+                    CalibrationMessage = "未找到点位地址: VerifyClear";
+                    return;
+                }
+                if (!await CommonMethods.plc.WriteNodeAsync<float>(address, 1f))
+                {
+                    CalibrationMessage = "验证清除写入失败";
+                    return;
+                }
+                await Task.Delay(1000);
+                if (!await CommonMethods.plc.WriteNodeAsync<float>(address, 0f))
+                {
+                    CalibrationMessage = "验证清除写入失败";
+                }
+            }
+            catch (Exception ex)
+            {
+                CalibrationMessage = "验证清除写入失败";
+                NLogHelper.Warn("验证清除命令写入失败", ex);
             }
         }
 
