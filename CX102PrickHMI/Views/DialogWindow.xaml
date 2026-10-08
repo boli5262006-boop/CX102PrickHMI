@@ -47,7 +47,7 @@
             <TextBlock
                 Text="{Binding Message, RelativeSource={RelativeSource AncestorType={x:Type hc:Window}}}"
                 Foreground="{StaticResource Ink}"
-                FontSize="14"
+                FontSize="16"
                 TextWrapping="Wrap" />
             <Button
                 x:Name="OkButton"

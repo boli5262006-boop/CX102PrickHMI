@@ -10,8 +10,8 @@
             <Setter Property="Foreground" Value="{StaticResource Ink}" />
             <Setter Property="BorderBrush" Value="{StaticResource Border}" />
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="FontSize" Value="18" />
-            <Setter Property="MinHeight" Value="52" />
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="MinHeight" Value="58" />
             <Setter Property="Margin" Value="3" />
             <Setter Property="Cursor" Value="Hand" />
             <Setter Property="Template">
@@ -45,8 +45,8 @@
             <Setter Property="Foreground" Value="White" />
             <Setter Property="BorderBrush" Value="{StaticResource PrimaryDark}" />
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="FontSize" Value="18" />
-            <Setter Property="MinHeight" Value="52" />
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="MinHeight" Value="58" />
             <Setter Property="Margin" Value="3" />
             <Setter Property="Cursor" Value="Hand" />
             <Setter Property="Template">
@@ -105,7 +105,7 @@
                     CornerRadius="8">
                     <TextBlock
                         FontFamily="Consolas"
-                        FontSize="30"
+                        FontSize="34"
                         Foreground="{StaticResource Ink}"
                         Text="{Binding KeypadEditValue}"
                         TextAlignment="Right" />

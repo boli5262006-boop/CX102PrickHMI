@@ -85,8 +85,8 @@
                 </ScrollViewer>
                 <Border Grid.Row="2" Background="{StaticResource Surface}" Padding="16,12">
                     <DockPanel>
-                        <TextBlock Text="{Binding HistoryStatus}" Foreground="{StaticResource Error}" FontSize="12" DockPanel.Dock="Right" />
-                        <TextBlock Text="{Binding DateSummary}" Foreground="{StaticResource Ink3}" FontSize="12" />
+                        <TextBlock Text="{Binding HistoryStatus}" Foreground="{StaticResource Error}" FontSize="14" DockPanel.Dock="Right" />
+                        <TextBlock Text="{Binding DateSummary}" Foreground="{StaticResource Ink3}" FontSize="14" />
                     </DockPanel>
                 </Border>
             </Grid>

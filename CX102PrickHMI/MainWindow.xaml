@@ -35,20 +35,19 @@
                         <TextBlock Text="⚙" Foreground="White" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <StackPanel>
-                        <TextBlock Text="刺辊自动化监控" Foreground="{StaticResource Ink}" FontSize="18" FontWeight="SemiBold" />
-                        <TextBlock Text="Prick Roller Automation HMI" Foreground="{StaticResource Ink3}" FontSize="12" />
+                        <TextBlock Text="刺辊自动化监控" Foreground="{StaticResource Ink}" FontSize="20" FontWeight="SemiBold" />
+                        <TextBlock Text="Prick Roller Automation HMI" Foreground="{StaticResource Ink3}" FontSize="14" />
                     </StackPanel>
                 </StackPanel>
                 <StackPanel DockPanel.Dock="Left"  Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="30,0,0,0"> 
-                    <Ellipse Width="8" Height="8" Fill="{StaticResource Success}" Margin="0,0,8,0" />
-                    <TextBlock Text="{Binding SystemStatus}" Foreground="{StaticResource Ink2}" Margin="0,0,20,0" />
-                    <TextBlock Text="--:--:--" Foreground="{StaticResource Ink2}" FontFamily="Consolas" />
+                    <!--<Ellipse Width="8" Height="8" Fill="{StaticResource Success}" Margin="0,0,8,0" />-->
+                    <!--<TextBlock Text="{Binding SystemStatus}" Foreground="{StaticResource Ink2}" Margin="0,0,20,0" />-->
+                  
                     <Button
-                        Margin="20,0,0,0"
+                        Margin="20,0,0,0"                      
                         VerticalAlignment="Center"
                         Command="{Binding ResetCommand}"
-                        Content="复位"
-                        Padding="16,6"
+                        Content="复位"                  
                         Style="{StaticResource HoldButtonStyle}" />
                 </StackPanel>
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
@@ -86,7 +85,7 @@
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
-                                    <Ellipse Width="20" Height="20" StrokeThickness="2" VerticalAlignment="Center">
+                                    <Ellipse Width="26" Height="26" StrokeThickness="2" VerticalAlignment="Center">
                                         <Ellipse.Style>
                                             <Style TargetType="Ellipse">
                                                 <Setter Property="Fill" Value="{StaticResource Surface2}" />
@@ -104,10 +103,10 @@
                                             </Style>
                                         </Ellipse.Style>
                                     </Ellipse>
-                                    <StackPanel Grid.Column="1" Margin="5,0,0,0" VerticalAlignment="Center">
-                                        <TextBlock Text="{Binding Number}" Foreground="{StaticResource Ink2}" FontSize="10" />
-                                        <TextBlock Text="{Binding Title}" Foreground="{StaticResource Ink}" FontSize="11" TextTrimming="CharacterEllipsis" />
-                                        <TextBlock Text="{Binding Status}" FontSize="10">
+                                    <StackPanel Grid.Column="1" Margin="8,0,0,0" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Number}" Foreground="{StaticResource Ink2}" FontSize="14" />
+                                        <TextBlock Text="{Binding Title}" Foreground="{StaticResource Ink}" FontSize="15" TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Text="{Binding Status}" FontSize="13">
                                             <TextBlock.Style>
                                                 <Style TargetType="TextBlock">
                                                     <Setter Property="Foreground" Value="{StaticResource Ink3}" />
@@ -133,11 +132,11 @@
 
         <ContentControl Grid.Row="2" Content="{Binding CurrentPage}" />
 
-        <Border Grid.Row="3" Background="{StaticResource Surface}" BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Padding="24,12" Margin="0,0,0,20">
+        <Border Grid.Row="3" Background="{StaticResource Surface}" BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Padding="24,6">
             <DockPanel>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="PLC连接状态" Foreground="{StaticResource Ink3}" FontSize="12" />
-                    <Ellipse Width="10" Height="10" Margin="8,0,0,0">
+                    <TextBlock Text="PLC连接状态" Foreground="{StaticResource Ink3}" FontSize="14" />
+                    <Ellipse Width="18" Height="18" Margin="8,0,0,0">
                         <Ellipse.Style>
                             <Style TargetType="Ellipse">
                                 <Setter Property="Fill" Value="{StaticResource Success}" />
@@ -150,7 +149,7 @@
                         </Ellipse.Style>
                     </Ellipse>
                 </StackPanel>
-                <TextBlock Text="{Binding Version}" Foreground="{StaticResource Ink3}" FontSize="12" DockPanel.Dock="Right" />
+                <!--<TextBlock Text="{Binding Version}" Foreground="{StaticResource Ink3}" FontSize="14" DockPanel.Dock="Right" />-->
             </DockPanel>
         </Border>
         </Grid>

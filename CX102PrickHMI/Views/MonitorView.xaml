@@ -10,7 +10,7 @@
     d:DataContext="{d:DesignInstance Type=vm:MonitorViewModel}"
     Background="{StaticResource PageBackground}"
     mc:Ignorable="d">
-    <Grid Margin="24,0,24,24">
+    <Grid Margin="24,0,24,12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -18,7 +18,7 @@
         </Grid.RowDefinitions>
         <!--<TextBlock
             Margin="0,20,0,12"
-            FontSize="20"
+            FontSize="24"
             FontWeight="SemiBold"
             Foreground="{StaticResource Ink}"
             Text="刺辊监控" />-->
@@ -41,20 +41,21 @@
                     <StackPanel>
                         <TextBlock
                             Margin="0,0,0,16"
+                            FontSize="20"
                             FontWeight="SemiBold"
                             Foreground="{StaticResource Ink}"
                             Text="当前配方值" />
                         <TextBlock
-                            FontSize="12"
+                            FontSize="18"
                             Foreground="{StaticResource Ink3}"
                             Text="内侧刺针环" />
                         <TextBlock
                             Margin="0,2,0,12"
                             FontFamily="Consolas"
-                            FontSize="30"
+                            FontSize="44"
                             FontWeight="SemiBold"
                             Foreground="{StaticResource Ink}"><Run Text="{Binding RecipeRing1, Mode=OneWay}" /><Run
-                                FontSize="14"
+                                FontSize="20"
                                 FontWeight="Normal"
                                 Foreground="{StaticResource Ink2}"
                                 Text=" mm" /></TextBlock>
@@ -65,15 +66,15 @@
                             <StackPanel>
                                 <!--<ctl:HslArcGauge   Max="6" Min="5"  Value="2.2"  SettingGaugeColor="Orange"  GaugeColor="Red"   GaugeUnit="mm"/>-->
                                 <TextBlock
-                                    FontSize="12"
+                                    FontSize="18"
                                     Foreground="{StaticResource Ink3}"
                                     Text="外侧刺针环" />
                                 <TextBlock
                                     FontFamily="Consolas"
-                                    FontSize="30"
+                                    FontSize="44"
                                     FontWeight="SemiBold"
                                     Foreground="{StaticResource Ink}"><Run Text="{Binding RecipeRing2, Mode=OneWay}" /><Run
-                                        FontSize="14"
+                                        FontSize="20"
                                         FontWeight="Normal"
                                         Foreground="{StaticResource Ink2}"
                                         Text=" mm" /></TextBlock>
@@ -88,20 +89,21 @@
                     <StackPanel>
                         <TextBlock
                             Margin="0,0,0,16"
+                            FontSize="20"
                             FontWeight="SemiBold"
                             Foreground="{StaticResource Ink}"
                             Text="当前实际值" />
                         <TextBlock
-                            FontSize="12"
+                            FontSize="18"
                             Foreground="{StaticResource Ink3}"
                             Text="内侧刺针环" />
                         <TextBlock
                             Margin="0,2,0,12"
                             FontFamily="Consolas"
-                            FontSize="30"
+                            FontSize="44"
                             FontWeight="SemiBold"
                             Foreground="{StaticResource Primary}"><Run Text="{Binding ActualRing1, Mode=OneWay}" /><Run
-                                FontSize="14"
+                                FontSize="20"
                                 FontWeight="Normal"
                                 Foreground="{StaticResource Ink2}"
                                 Text=" mm" /></TextBlock>
@@ -111,15 +113,15 @@
                             BorderThickness="0,1,0,0">
                             <StackPanel>
                                 <TextBlock
-                                    FontSize="12"
+                                    FontSize="18"
                                     Foreground="{StaticResource Ink3}"
                                     Text="外侧刺针环" />
                                 <TextBlock
                                     FontFamily="Consolas"
-                                    FontSize="30"
+                                    FontSize="44"
                                     FontWeight="SemiBold"
                                     Foreground="{StaticResource Primary}"><Run Text="{Binding ActualRing2, Mode=OneWay}" /><Run
-                                        FontSize="14"
+                                        FontSize="20"
                                         FontWeight="Normal"
                                         Foreground="{StaticResource Ink2}"
                                         Text=" mm" /></TextBlock>
@@ -135,6 +137,7 @@
                     <StackPanel>
                         <TextBlock
                             Margin="0,0,0,18"
+                            FontSize="20"
                             FontWeight="SemiBold"
                             Foreground="{StaticResource Ink}"
                             Text="伺服控制" />
@@ -146,10 +149,10 @@
                             <StackPanel Margin="0,0,8,0">
                                 <TextBlock
                                     Margin="0,0,0,4"
-                                    FontSize="12"
+                                    FontSize="18"
                                     Foreground="{StaticResource Ink3}"
                                     Text="内侧伺服 校准原点值" />
-                                <TextBox Text="{Binding HomingRefPosInText, Mode=OneWay}">
+                                <TextBox FontSize="18" Text="{Binding HomingRefPosInText, Mode=OneWay}">
                                     <TextBox.InputBindings>
                                         <MouseBinding Command="{Binding OpenKeypadInCommand}" MouseAction="LeftClick" />
                                     </TextBox.InputBindings>
@@ -167,10 +170,10 @@
                             <StackPanel Grid.Column="1" Margin="8,0,0,0">
                                 <TextBlock
                                     Margin="0,0,0,4"
-                                    FontSize="12"
+                                    FontSize="18"
                                     Foreground="{StaticResource Ink3}"
                                     Text="外侧伺服 校准原点值" />
-                                <TextBox Text="{Binding HomingRefPosOutText, Mode=OneWay}">
+                                <TextBox FontSize="18" Text="{Binding HomingRefPosOutText, Mode=OneWay}">
                                     <TextBox.InputBindings>
                                         <MouseBinding Command="{Binding OpenKeypadOutCommand}" MouseAction="LeftClick" />
                                     </TextBox.InputBindings>
@@ -209,127 +212,57 @@
                                     Style="{StaticResource HoldButtonStyle}" />
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
-                            <Button b:MomentaryButtonBehavior.Command="{Binding HoldSetupCommand}" Content="设置">
-                                <Button.Style>
-                                    <Style BasedOn="{StaticResource HoldButtonStyle}" TargetType="Button">
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding StsNewRcpBlink}" Value="True">
-                                                <Setter Property="Background" Value="{StaticResource Primary}" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Button.Style>
-                            </Button>
-                            <TextBlock
+                                <Button
+                                Margin="0,0,12,0"
+                                b:MomentaryButtonBehavior.Command="{Binding HoldHomingInCommand}"
+                                Content="内侧校准"
+                                Style="{StaticResource HoldButtonStyle}" />
+                                <Button
+                                Margin="0,0,12,0"
+                                b:MomentaryButtonBehavior.Command="{Binding HoldHomingOutCommand}"
+                                Content="外侧校准"
+                                Style="{StaticResource HoldButtonStyle}" />
+                                <Button b:MomentaryButtonBehavior.Command="{Binding HoldSetupCommand}" Content="设置">
+                                    <Button.Style>
+                                        <Style BasedOn="{StaticResource HoldButtonStyle}" TargetType="Button">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding StsNewRcpBlink}" Value="True">
+                                                    <Setter Property="Background" Value="{StaticResource Primary}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                                <TextBlock
                                 Margin="24,0,0,0"
                                 VerticalAlignment="Center"
+                                FontSize="18"
                                 Foreground="{StaticResource Ink}"
                                 Text="维修模式" />
-                            <TextBlock
+                                <TextBlock
                                 Margin="6,0,0,0"
                                 VerticalAlignment="Center"
-                                FontSize="12">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Text" Value="未激活" />
-                                        <Setter Property="Foreground" Value="{StaticResource Ink3}" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding TriggerMaintenance}" Value="True">
-                                                <Setter Property="Text" Value="激活" />
-                                                <Setter Property="Foreground" Value="{StaticResource Success}" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
+                                FontSize="18">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Text" Value="未激活" />
+                                            <Setter Property="Foreground" Value="{StaticResource Ink3}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding TriggerMaintenance}" Value="True">
+                                                    <Setter Property="Text" Value="激活" />
+                                                    <Setter Property="Foreground" Value="{StaticResource Success}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
                             </StackPanel>
                         </StackPanel>
-                        <TextBlock
+                        <!--<TextBlock
                             Margin="0,0,0,16"
-                            FontSize="12"
+                            FontSize="18"
                             Foreground="{StaticResource Ink3}"
-                            Text="{Binding CalibrationMessage}" />
-                        <Border
-                            Padding="0,16,0,0"
-                            BorderBrush="{StaticResource Line}"
-                            BorderThickness="0,1,0,0">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock
-                                        FontSize="13"
-                                        Foreground="{StaticResource Ink}"
-                                        Text="内侧伺服" />
-                                    <Ellipse
-                                        Width="12"
-                                        Height="12"
-                                        Margin="16,0,6,0">
-                                        <Ellipse.Style>
-                                            <Style TargetType="Ellipse">
-                                                <Setter Property="Fill" Value="{StaticResource Ink3}" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding StsHomingDoneIn}" Value="True">
-                                                        <Setter Property="Fill" Value="{StaticResource Success}" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Ellipse.Style>
-                                    </Ellipse>
-                                    <TextBlock FontSize="13">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Foreground" Value="{StaticResource Ink2}" />
-                                                <Setter Property="Text" Value="未回原" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding StsHomingDoneIn}" Value="True">
-                                                        <Setter Property="Text" Value="已回原" />
-                                                        <Setter Property="Foreground" Value="{StaticResource Ink}" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                </StackPanel>
-                                <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                    <TextBlock
-                                        FontSize="13"
-                                        Foreground="{StaticResource Ink}"
-                                        Text="外侧伺服" />
-                                    <Ellipse
-                                        Width="12"
-                                        Height="12"
-                                        Margin="16,0,6,0">
-                                        <Ellipse.Style>
-                                            <Style TargetType="Ellipse">
-                                                <Setter Property="Fill" Value="{StaticResource Ink3}" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding StsHomingDoneOut}" Value="True">
-                                                        <Setter Property="Fill" Value="{StaticResource Success}" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Ellipse.Style>
-                                    </Ellipse>
-                                    <TextBlock FontSize="13">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Foreground" Value="{StaticResource Ink2}" />
-                                                <Setter Property="Text" Value="未回原" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding StsHomingDoneOut}" Value="True">
-                                                        <Setter Property="Text" Value="已回原" />
-                                                        <Setter Property="Foreground" Value="{StaticResource Ink}" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                </StackPanel>
-                            </Grid>
-                        </Border>
+                            Text="{Binding CalibrationMessage}" />-->
                     </StackPanel>
                 </Border>
             </Grid>
@@ -337,6 +270,7 @@
                 <StackPanel>
                     <TextBlock
                         Margin="0,0,0,16"
+                        FontSize="20"
                         FontWeight="SemiBold"
                         Foreground="{StaticResource Ink}"
                         Text="设备状态" />
@@ -345,7 +279,13 @@
                         Margin="0,0,0,16"
                         Background="{StaticResource Surface2}"
                         BorderThickness="2"
-                        CornerRadius="8">
+                        CornerRadius="8"
+                        Cursor="Hand">
+                        <Border.InputBindings>
+                            <MouseBinding
+                                Gesture="LeftClick"
+                                Command="{Binding DataContext.ShowAlarmsCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
+                        </Border.InputBindings>
                         <Border.Style>
                             <Style TargetType="Border">
                                 <Setter Property="BorderBrush" Value="{StaticResource Line}" />
@@ -406,8 +346,8 @@
                         Padding="0,10"
                         BorderBrush="{StaticResource Line}"
                         BorderThickness="0,0,0,1">
-                        <DockPanel>
-                            <TextBlock>
+                        <DockPanel LastChildFill="False">
+                            <TextBlock FontSize="18">
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="Foreground" Value="{StaticResource Ink}" />
@@ -421,8 +361,8 @@
                                 </TextBlock.Style>
                             </TextBlock>
                             <Ellipse
-                                Width="12"
-                                Height="12"
+                                Width="18"
+                                Height="18"
                                 Margin="22,0,0,0"
                                 DockPanel.Dock="Right">
                                 <Ellipse.Style>
@@ -442,8 +382,8 @@
                         Padding="0,10"
                         BorderBrush="{StaticResource Line}"
                         BorderThickness="0,0,0,1">
-                        <DockPanel>
-                            <TextBlock>
+                        <DockPanel LastChildFill="False">
+                            <TextBlock FontSize="18">
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="Foreground" Value="{StaticResource Ink}" />
@@ -457,8 +397,8 @@
                                 </TextBlock.Style>
                             </TextBlock>
                             <Ellipse
-                                Width="12"
-                                Height="12"
+                                Width="18"
+                                Height="18"
                                 DockPanel.Dock="Right">
                                 <Ellipse.Style>
                                     <Style TargetType="Ellipse">
@@ -478,8 +418,8 @@
                         Padding="0,10"
                         BorderBrush="{StaticResource Line}"
                         BorderThickness="0,0,0,1">
-                        <DockPanel>
-                            <TextBlock>
+                        <DockPanel LastChildFill="False">
+                            <TextBlock FontSize="18">
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="Foreground" Value="{StaticResource Ink}" />
@@ -493,14 +433,84 @@
                                 </TextBlock.Style>
                             </TextBlock>
                             <Ellipse
-                                Width="12"
-                                Height="12"
+                                Width="18"
+                                Height="18"
                                 DockPanel.Dock="Right">
                                 <Ellipse.Style>
                                     <Style TargetType="Ellipse">
                                         <Setter Property="Fill" Value="{StaticResource Ink3}" />
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding DriveOutEnable}" Value="True">
+                                                <Setter Property="Fill" Value="{StaticResource Success}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Ellipse.Style>
+                            </Ellipse>
+                        </DockPanel>
+                    </Border>
+                    <Border
+                        Padding="0,10"
+                        BorderBrush="{StaticResource Line}"
+                        BorderThickness="0,0,0,1">
+                        <DockPanel LastChildFill="False">
+                            <TextBlock FontSize="18">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="{StaticResource Ink}" />
+                                        <Setter Property="Text" Value="内侧未回原" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding StsHomingDoneIn}" Value="True">
+                                                <Setter Property="Text" Value="内侧已回原" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <Ellipse
+                                Width="18"
+                                Height="18"
+                                DockPanel.Dock="Right">
+                                <Ellipse.Style>
+                                    <Style TargetType="Ellipse">
+                                        <Setter Property="Fill" Value="{StaticResource Ink3}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding StsHomingDoneIn}" Value="True">
+                                                <Setter Property="Fill" Value="{StaticResource Success}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Ellipse.Style>
+                            </Ellipse>
+                        </DockPanel>
+                    </Border>
+                    <Border
+                        Padding="0,10"
+                        BorderBrush="{StaticResource Line}"
+                        BorderThickness="0,0,0,1">
+                        <DockPanel LastChildFill="False">
+                            <TextBlock FontSize="18">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="{StaticResource Ink}" />
+                                        <Setter Property="Text" Value="外侧未回原" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding StsHomingDoneOut}" Value="True">
+                                                <Setter Property="Text" Value="外侧已回原" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <Ellipse
+                                Width="18"
+                                Height="18"
+                                DockPanel.Dock="Right">
+                                <Ellipse.Style>
+                                    <Style TargetType="Ellipse">
+                                        <Setter Property="Fill" Value="{StaticResource Ink3}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding StsHomingDoneOut}" Value="True">
                                                 <Setter Property="Fill" Value="{StaticResource Success}" />
                                             </DataTrigger>
                                         </Style.Triggers>

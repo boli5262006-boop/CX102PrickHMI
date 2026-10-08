@@ -71,8 +71,8 @@ namespace CX102PrickHMI.ViewModels
                 new ProcessStep("主线停机", "未开始", ProcessStepState.Pending, 1),
                 new ProcessStep("配方加载", "未开始", ProcessStepState.Pending, 2),
                 new ProcessStep("槽辊打开", "未开始", ProcessStepState.Pending, 3),
-                new ProcessStep("位置到达", "未开始", ProcessStepState.Pending, 4),
-                new ProcessStep("传送带回退", "未开始", ProcessStepState.Pending, 5),
+                new ProcessStep("传送带回退", "未开始", ProcessStepState.Pending, 4),
+                new ProcessStep("位置到达", "未开始", ProcessStepState.Pending, 5),
                 new ProcessStep("槽辊收回", "未开始", ProcessStepState.Pending, 6)
             };
             AlarmItems = new ObservableCollection<AlarmEntry>();
@@ -204,8 +204,8 @@ namespace CX102PrickHMI.ViewModels
             UpdateStepSnapshot(values, "MainMachineStop", 0);
             UpdateStepSnapshot(values, "StsStepRcpLoaded", 1);
             UpdateStepSnapshot(values, "StsStepRollerOpen", 2);
-            UpdateStepSnapshot(values, "StsStepAxisInPos", 3);
-            UpdateStepSnapshot(values, "StsStepConveyorDone", 4);
+            UpdateStepSnapshot(values, "StsStepConveyorDone", 3);
+            UpdateStepSnapshot(values, "StsStepAxisInPos", 4);
             UpdateStepSnapshot(values, "StsStepRollerClosed", 5);
 
             // 设备图片报警呼吸闪烁：13 个报警点位任一为真（搭接量超限不属于此报警源）
@@ -1157,17 +1157,17 @@ namespace CX102PrickHMI.ViewModels
                 if (HasAnySpliceAlarm)
                 {
                     var parts = new List<string>();
-                    if (SpliceValue1OutOfRange) parts.Add("P-01 前段");
+                    if (SpliceValue1OutOfRange) parts.Add("P-01 操作侧");
                     if (SpliceValue2OutOfRange) parts.Add("P-02 中段");
-                    if (SpliceValue3OutOfRange) parts.Add("P-03 后段");
+                    if (SpliceValue3OutOfRange) parts.Add("P-03 驱动侧");
                     return "报警 | ALARM: " + string.Join("、", parts.ToArray()) + " 搭接量超出标准范围 (4±2mm)";
                 }
                 if (HasAnySpliceWarning)
                 {
                     var parts = new List<string>();
-                    if (SpliceValue1Warning) parts.Add("P-01 前段");
+                    if (SpliceValue1Warning) parts.Add("P-01 操作侧");
                     if (SpliceValue2Warning) parts.Add("P-02 中段");
-                    if (SpliceValue3Warning) parts.Add("P-03 后段");
+                    if (SpliceValue3Warning) parts.Add("P-03 驱动侧");
                     return "预警 | WARNING: " + string.Join("、", parts.ToArray()) + " 搭接量接近标准范围 (4±1mm)";
                 }
                 return "检测正常 | SYSTEM NORMAL";
