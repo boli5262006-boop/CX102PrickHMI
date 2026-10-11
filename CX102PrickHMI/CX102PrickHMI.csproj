@@ -159,6 +159,7 @@
     <Compile Include="Behaviors\MomentaryButtonBehavior.cs" />
     <Compile Include="CommonMethods.cs" />
     <Compile Include="Configure\ConfigureService.cs" />
+    <Compile Include="Converters\SpliceValueFormatConverter.cs" />
     <Compile Include="Interfaces\IAlarmRepository.cs" />
     <Compile Include="Interfaces\IRepository.cs" />
     <Compile Include="Models\Alarms.cs" />

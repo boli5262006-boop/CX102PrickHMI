@@ -114,7 +114,11 @@ namespace CX102PrickHMI.ViewModels
             HoldJogOutFwdCommand = new RelayCommand<bool>(value => _ = SendMomentaryAsync("CmdJogOutFwd", value));
             HoldJogOutBwdCommand = new RelayCommand<bool>(value => _ = SendMomentaryAsync("CmdJogOutBwd", value));
             ResetCommand = new AsyncRelayCommand(ResetPulseAsync);
-            VerifyModeCommand = new RelayCommand<bool>(value => _ = SendFloatAsync("VerifyMode", value ? 1f : 0f));
+            VerifyModeCommand = new RelayCommand<bool>(value =>
+            {
+                IsVerifyModeActive = value;
+                _ = SendFloatAsync("VerifyMode", value ? 1f : 0f);
+            });
             VerifyClearCommand = new AsyncRelayCommand(VerifyClearPulseAsync);
 
             // 历史查询：默认前一日 00:00:00 至 当日 00:00:00（24 小时，满足 48 小时规则）
@@ -1089,6 +1093,14 @@ namespace CX102PrickHMI.ViewModels
         }
 
         // —— 搭接监控页 (OverlapMonitorView) ——
+        // 验证模式激活：仪表盘数值显示切换为 2 位小数
+        private bool _isVerifyModeActive;
+        public bool IsVerifyModeActive
+        {
+            get { return _isVerifyModeActive; }
+            private set { SetProperty(ref _isVerifyModeActive, value); }
+        }
+
         private double _spliceValue1Value;
         public double SpliceValue1Value
         {

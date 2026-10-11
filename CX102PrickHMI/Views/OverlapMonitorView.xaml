@@ -5,8 +5,10 @@
     xmlns:ctl="clr-namespace:HslControls.WPF;assembly=HslControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:conv="clr-namespace:CX102PrickHMI.Converters"
     mc:Ignorable="d">
     <UserControl.Resources>
+        <conv:SpliceValueFormatConverter x:Key="SpliceValueFormat" />
         <DrawingBrush
             x:Key="PageGridBrush"
             TileMode="Tile"
@@ -465,7 +467,6 @@
                                     Width="240"
                                     Height="160"
                                     HorizontalAlignment="Center"
-                                    ArcGaugeFormat="F1"
                                     Background="Transparent"
                                     Foreground="{StaticResource Ink2}"
                                     GaugeUnit="mm"
@@ -476,8 +477,12 @@
                                     Value="{Binding SpliceValue1Value}">
                                     <ctl:HslArcGauge.Style>
                                         <Style TargetType="ctl:HslArcGauge">
+                                            <Setter Property="ArcGaugeFormat" Value="F1" />
                                             <Setter Property="GaugeColor" Value="{StaticResource Success}" />
                                             <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsVerifyModeActive}" Value="True">
+                                                    <Setter Property="ArcGaugeFormat" Value="F2" />
+                                                </DataTrigger>
                                                 <DataTrigger Binding="{Binding SpliceValue1Warning}" Value="True">
                                                     <Setter Property="GaugeColor" Value="{StaticResource Warning}" />
                                                 </DataTrigger>
@@ -589,8 +594,13 @@
                                         Width="72"
                                         FontFamily="Consolas"
                                         FontSize="18"
-                                        Text="{Binding SpliceValue1Value, StringFormat={}{0:F1}mm}"
                                         TextAlignment="Center">
+                                        <TextBlock.Text>
+                                            <MultiBinding Converter="{StaticResource SpliceValueFormat}">
+                                                <Binding Path="SpliceValue1Value" />
+                                                <Binding Path="IsVerifyModeActive" />
+                                            </MultiBinding>
+                                        </TextBlock.Text>
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Foreground" Value="{StaticResource Success}" />
@@ -909,7 +919,6 @@
                                     Width="240"
                                     Height="160"
                                     HorizontalAlignment="Center"
-                                    ArcGaugeFormat="F1"
                                     Background="Transparent"
                                     Foreground="{StaticResource Ink2}"
                                     GaugeUnit="mm"
@@ -920,8 +929,12 @@
                                     Value="{Binding SpliceValue2Value}">
                                     <ctl:HslArcGauge.Style>
                                         <Style TargetType="ctl:HslArcGauge">
+                                            <Setter Property="ArcGaugeFormat" Value="F1" />
                                             <Setter Property="GaugeColor" Value="{StaticResource Success}" />
                                             <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsVerifyModeActive}" Value="True">
+                                                    <Setter Property="ArcGaugeFormat" Value="F2" />
+                                                </DataTrigger>
                                                 <DataTrigger Binding="{Binding SpliceValue2Warning}" Value="True">
                                                     <Setter Property="GaugeColor" Value="{StaticResource Warning}" />
                                                 </DataTrigger>
@@ -1033,8 +1046,13 @@
                                         Width="72"
                                         FontFamily="Consolas"
                                         FontSize="18"
-                                        Text="{Binding SpliceValue2Value, StringFormat={}{0:F1}mm}"
                                         TextAlignment="Center">
+                                        <TextBlock.Text>
+                                            <MultiBinding Converter="{StaticResource SpliceValueFormat}">
+                                                <Binding Path="SpliceValue2Value" />
+                                                <Binding Path="IsVerifyModeActive" />
+                                            </MultiBinding>
+                                        </TextBlock.Text>
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Foreground" Value="{StaticResource Success}" />
@@ -1352,7 +1370,6 @@
                                     Width="240"
                                     Height="160"
                                     HorizontalAlignment="Center"
-                                    ArcGaugeFormat="F1"
                                     Background="Transparent"
                                     Foreground="{StaticResource Ink2}"
                                     GaugeUnit="mm"
@@ -1363,8 +1380,12 @@
                                     Value="{Binding SpliceValue3Value}">
                                     <ctl:HslArcGauge.Style>
                                         <Style TargetType="ctl:HslArcGauge">
+                                            <Setter Property="ArcGaugeFormat" Value="F1" />
                                             <Setter Property="GaugeColor" Value="{StaticResource Success}" />
                                             <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsVerifyModeActive}" Value="True">
+                                                    <Setter Property="ArcGaugeFormat" Value="F2" />
+                                                </DataTrigger>
                                                 <DataTrigger Binding="{Binding SpliceValue3Warning}" Value="True">
                                                     <Setter Property="GaugeColor" Value="{StaticResource Warning}" />
                                                 </DataTrigger>
@@ -1476,8 +1497,13 @@
                                         Width="72"
                                         FontFamily="Consolas"
                                         FontSize="18"
-                                        Text="{Binding SpliceValue3Value, StringFormat={}{0:F1}mm}"
                                         TextAlignment="Center">
+                                        <TextBlock.Text>
+                                            <MultiBinding Converter="{StaticResource SpliceValueFormat}">
+                                                <Binding Path="SpliceValue3Value" />
+                                                <Binding Path="IsVerifyModeActive" />
+                                            </MultiBinding>
+                                        </TextBlock.Text>
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Foreground" Value="{StaticResource Success}" />
